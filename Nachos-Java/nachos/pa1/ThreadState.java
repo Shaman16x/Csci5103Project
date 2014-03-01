@@ -63,6 +63,10 @@ public class ThreadState {
 	    
 	    this.priority = priority;
 	}
+    
+    public String toString() {
+	return thread.toString() + ":" + priority;
+    }
     /*
 	/**
 	 * Called when <tt>waitForAccess(thread)</tt> (where <tt>thread</tt> is

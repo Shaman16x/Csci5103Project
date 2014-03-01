@@ -13,7 +13,7 @@ public class StaticPriorityScheduler extends Scheduler{
 
 	protected static ArrayList<ThreadState> states = new ArrayList<ThreadState>();
 
-	protected int maxPriorityValue = 7;
+	protected int maxPriorityValue = 10;
 	protected int minPriorityValue = 0;
 
     // for debugging purposes
@@ -25,7 +25,9 @@ public class StaticPriorityScheduler extends Scheduler{
      * Allocate a new scheduler.
      */
     public StaticPriorityScheduler() {
-        maxPriorityValue = Config.getInteger("scheduler.mamaxPriorityValue");
+        Integer i = Config.getInteger("scheduler.maxPriorityValue");
+        if(i != null)
+            maxPriorityValue = i;
     }
     
     /**
