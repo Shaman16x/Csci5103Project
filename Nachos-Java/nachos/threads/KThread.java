@@ -1,6 +1,7 @@
 package nachos.threads;
 
 import nachos.machine.*;
+import nachos.pa1.*;
 
 /**
  * A KThread is a thread that can be used to execute Nachos kernel code. Nachos
@@ -403,11 +404,14 @@ public class KThread {
     public static void selfTest() {
 	Lib.debug(dbgThread, "Enter KThread.selfTest");
 
-	int num= Integer.parseInt(Config.getString("Kernel.numThreads"));
-	for(int i=0; i<num; i++){
-		new KThread(new PingTest(i)).setName("forked thread").fork();
-	}
-
+    if(Config.getBoolean("runTests"))
+        new KThread(new SchedTest1(0)).setName("Schedule Test 1").fork();
+    else {
+        int num= Integer.parseInt(Config.getString("Kernel.numThreads"));
+        for(int i=0; i<num; i++){
+            new KThread(new PingTest(i)).setName("forked thread").fork();
+        }
+    }
     }
 
     private static final char dbgThread = 't';

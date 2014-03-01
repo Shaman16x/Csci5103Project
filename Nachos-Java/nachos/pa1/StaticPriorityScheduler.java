@@ -16,10 +16,16 @@ public class StaticPriorityScheduler extends Scheduler{
 	protected int maxPriorityValue = 7;
 	protected int minPriorityValue = 0;
 
+    // for debugging purposes
+    public int getMaxPriorityValue(){
+        return maxPriorityValue;
+    }
+
     /**
      * Allocate a new scheduler.
      */
     public StaticPriorityScheduler() {
+        maxPriorityValue = Config.getInteger("scheduler.mamaxPriorityValue");
     }
     
     /**
