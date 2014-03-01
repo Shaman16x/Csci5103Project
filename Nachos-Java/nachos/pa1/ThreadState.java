@@ -49,7 +49,7 @@ public class ThreadState {
 	 */
 	public int getEffectivePriority() {
 	    // implement me
-	    return priority;
+	    return priority+waitTime-runTime;
 	}
 
 	/**
@@ -99,6 +99,8 @@ public class ThreadState {
 	}	
     */
 
+    protected int runTime = 0;
+    protected int waitTime = 0;
 	/** The thread with which this object is associated. */	   
 	protected KThread thread;
 	/** The priority of the associated thread. */
