@@ -1,0 +1,18 @@
+Design Decisions
+
+To track priority we decide to use the ThreadState class from 
+Priority Scheduler
+
+
+
+StaticPriorityScheduler
+------------------------------------------------------------------------
+
+
+DynamicPriorityScheduler
+------------------------------------------------------------------------
+
+
+MultiLevelScheduler
+------------------------------------------------------------------------
+
