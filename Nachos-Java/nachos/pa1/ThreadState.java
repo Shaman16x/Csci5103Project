@@ -1,4 +1,15 @@
-protected class ThreadState {
+package nachos.pa1;
+
+import nachos.threads.KThread;
+
+/*
+ * ThreadState is a container used to hold a thread and an associated
+ * priority
+ * 
+ */
+
+
+public class ThreadState {
 	/**
 	 * Allocate a new <tt>ThreadState</tt> object and associate it with the
 	 * specified thread.
@@ -8,7 +19,7 @@ protected class ThreadState {
 	public ThreadState(KThread thread) {
 	    this.thread = thread;
 	    
-	    setPriority(priorityDefault);
+	    setPriority(7);     //TODO: use better default
 	}
 
 	public ThreadState(KThread thread, int priority){
@@ -52,7 +63,7 @@ protected class ThreadState {
 	    
 	    this.priority = priority;
 	}
-
+    /*
 	/**
 	 * Called when <tt>waitForAccess(thread)</tt> (where <tt>thread</tt> is
 	 * the associated thread) is invoked on the specified priority queue.
@@ -64,7 +75,7 @@ protected class ThreadState {
 	 *				now waiting on.
 	 *
 	 * @see	nachos.threads.ThreadQueue#waitForAccess
-	 */
+	 
 	public void waitForAccess(PriorityQueue waitQueue) {
 	    // implement me
 	}
@@ -78,10 +89,11 @@ protected class ThreadState {
 	 *
 	 * @see	nachos.threads.ThreadQueue#acquire
 	 * @see	nachos.threads.ThreadQueue#nextThread
-	 */
+	 
 	public void acquire(PriorityQueue waitQueue) {
 	    // implement me
 	}	
+    */
 
 	/** The thread with which this object is associated. */	   
 	protected KThread thread;

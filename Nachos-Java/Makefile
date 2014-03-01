@@ -29,7 +29,9 @@ vm =		VMKernel VMProcess
 
 network = 	NetKernel NetProcess PostOffice MailMessage
 
-pa1 =       StaticPriorityScheduler StaticPriorityQueue
+pa1 =		StaticPriorityScheduler StaticPriorityQueue \
+		ThreadState \
+		SchedTest1
 
 ALLDIRS = machine security ag threads userprog vm network pa1
 

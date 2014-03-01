@@ -78,18 +78,18 @@ public class StaticPriorityScheduler extends Scheduler{
     }
 	
 	public ThreadState getThreadState(KThread thread){
-		ThreadState s;
+		ThreadState state;
 	
-		for(s : states){
+		for(ThreadState s : states){
 			if(s.getThread().compareTo(thread) == 0){
 				return s;
 			}
 		}
 
-		s = new ThreadState(KThread,maxPriorityValue);
-		states.add(s);
+		state = new ThreadState(thread,maxPriorityValue);
+		states.add(state);
 
-		return s;
+		return state;
 	}
 	
     /**
@@ -148,12 +148,12 @@ public class StaticPriorityScheduler extends Scheduler{
     public void setPriority(KThread thread, int priority) {
 		Lib.assertTrue(Machine.interrupt().disabled());
 		boolean found = false;
-		ThreadState s;
+		ThreadState state;
 
 		if(priority>maxPriorityValue) priority = maxPriorityValue;
 		if(priority<minPriorityValue) priority = minPriorityValue;
 
-		for(s : states){
+		for(ThreadState s : states){
 			if(s.getThread().compareTo(thread) == 0){
 				found = true;
 				s.setPriority(priority);
@@ -161,8 +161,8 @@ public class StaticPriorityScheduler extends Scheduler{
 		}
 
 		if(!found){
-			s = new ThreadState(thread);
-			s.setPriority(priority);
+			state = new ThreadState(thread, priority);
+            states.add(state);
 		}
     }
 
