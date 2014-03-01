@@ -2,6 +2,7 @@ package nachos.pa1;
 
 import nachos.threads.*;
 import nachos.machine.*;
+import java.util.*;
 
 /**
  * Coordinates a group of thread queues of the same kind.
@@ -9,6 +10,12 @@ import nachos.machine.*;
  * @see	nachos.threads.ThreadQueue
  */
 public class StaticPriorityScheduler extends Scheduler{
+
+	protected static ArrayList<ThreadState> states = new ArrayList<ThreadState>();
+
+	protected int maxPriorityValue = 7;
+	protected int minPriorityValue = 0;
+
     /**
      * Allocate a new scheduler.
      */
@@ -63,10 +70,28 @@ public class StaticPriorityScheduler extends Scheduler{
      * @return	the thread's priority.
      */
     public int getPriority(KThread thread) {
-	Lib.assertTrue(Machine.interrupt().disabled());
-	return 0;
-    }
+		Lib.assertTrue(Machine.interrupt().disabled());
 
+		ThreadState s = getThreadState(thread);
+		
+		return s.getPriority();
+    }
+	
+	public ThreadState getThreadState(KThread thread){
+		ThreadState s;
+	
+		for(s : states){
+			if(s.getThread().compareTo(thread) == 0){
+				return s;
+			}
+		}
+
+		s = new ThreadState(KThread,maxPriorityValue);
+		states.add(s);
+
+		return s;
+	}
+	
     /**
      * Get the priority of the current thread. Equivalent to
      * <tt>getPriority(KThread.currentThread())</tt>.
@@ -121,7 +146,24 @@ public class StaticPriorityScheduler extends Scheduler{
      * @param	priority	the new priority.
      */
     public void setPriority(KThread thread, int priority) {
-	Lib.assertTrue(Machine.interrupt().disabled());
+		Lib.assertTrue(Machine.interrupt().disabled());
+		boolean found = false;
+		ThreadState s;
+
+		if(priority>maxPriorityValue) priority = maxPriorityValue;
+		if(priority<minPriorityValue) priority = minPriorityValue;
+
+		for(s : states){
+			if(s.getThread().compareTo(thread) == 0){
+				found = true;
+				s.setPriority(priority);
+			}
+		}
+
+		if(!found){
+			s = new ThreadState(thread);
+			s.setPriority(priority);
+		}
     }
 
     /**

@@ -1,6 +1,7 @@
 package nachos.pa1;
 
 import nachos.threads.*;
+import java.util.*;
 /**
  * Schedules access to some sort of resource with limited access constraints. A
  * thread queue can be used to share this limited access among multiple
@@ -39,6 +40,9 @@ import nachos.threads.*;
  * All thread queue methods must be invoked with <b>interrupts disabled</b>.
  */
 public class StaticPriorityQueue extends ThreadQueue{
+	
+	protected ArrayList<ThreadState> queue = new ArrayList<ThreadState>();
+
     /**
      * Notify this thread queue that the specified thread is waiting for
      * access. This method should only be called if the thread cannot
@@ -61,6 +65,13 @@ public class StaticPriorityQueue extends ThreadQueue{
      * @param	thread	the thread waiting for access.
      */
     public void waitForAccess(KThread thread){
+        StaticPriorityScheduler sched = new StaticPriorityScheduler();
+        int i=1;
+        ThreadState s = sched.getThreadState(thread);
+        for(int i=0; i<queue.size(); i++)
+            if(s.getPriority() < queue.get(i).getPriority())
+                break;
+        queue.add(i,s);
     }
 
     /**
@@ -77,7 +88,9 @@ public class StaticPriorityQueue extends ThreadQueue{
      *		are no threads waiting.
      */
     public KThread nextThread() {
-        return new KThread();
+        if(queue.isEmpty())
+            return null;
+        return queue.remove(0);
     }
 
     /**
@@ -94,11 +107,16 @@ public class StaticPriorityQueue extends ThreadQueue{
      * 			returned from <tt>nextThread()</tt>.
      */
     public void acquire(KThread thread) {
+        for(int i=0; i<queue.size(); i++)
+            if(thread.compareTo(queue.get(i).getThread()) == 0)
+                queue.remove(i);
     }
 
     /**
      * Print out all the threads waiting for access, in no particular order.
      */
     public void print() {
+		for(ThreadState s:queue)
+            System.out.println(s.getThread().getName() + "\t" + s.getThread().getId());
     }
 }

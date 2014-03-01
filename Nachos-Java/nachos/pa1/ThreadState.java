@@ -11,6 +11,12 @@ protected class ThreadState {
 	    setPriority(priorityDefault);
 	}
 
+	public ThreadState(KThread thread, int priority){
+		this.thread = thread;
+	    
+	    setPriority(priority);
+	}
+
 	/**
 	 * Return the priority of the associated thread.
 	 *
@@ -18,6 +24,11 @@ protected class ThreadState {
 	 */
 	public int getPriority() {
 	    return priority;
+	}
+
+
+	public KThread getThread(){
+		return thread;
 	}
 
 	/**
@@ -40,8 +51,6 @@ protected class ThreadState {
 		return;
 	    
 	    this.priority = priority;
-	    
-	    // implement me
 	}
 
 	/**
