@@ -1,5 +1,6 @@
-package nachos.threads;
+package nachos.pa1;
 
+import nachos.threads.*;
 /**
  * Schedules access to some sort of resource with limited access constraints. A
  * thread queue can be used to share this limited access among multiple
@@ -37,7 +38,7 @@ package nachos.threads;
  * <p>
  * All thread queue methods must be invoked with <b>interrupts disabled</b>.
  */
-public abstract class ThreadQueue {
+public class StaticPriorityQueue extends ThreadQueue{
     /**
      * Notify this thread queue that the specified thread is waiting for
      * access. This method should only be called if the thread cannot
@@ -59,7 +60,8 @@ public abstract class ThreadQueue {
      *
      * @param	thread	the thread waiting for access.
      */
-    public abstract void waitForAccess(KThread thread);
+    public void waitForAccess(KThread thread){
+    }
 
     /**
      * Notify this thread queue that another thread can receive access. Choose
@@ -74,7 +76,9 @@ public abstract class ThreadQueue {
      * @return	the next thread to receive access, or <tt>null</tt> if there
      *		are no threads waiting.
      */
-    public abstract KThread nextThread();
+    public KThread nextThread() {
+        return new KThread();
+    }
 
     /**
      * Notify this thread queue that a thread has received access, without
@@ -89,10 +93,12 @@ public abstract class ThreadQueue {
      * @param	thread	the thread that has received access, but was not
      * 			returned from <tt>nextThread()</tt>.
      */
-    public abstract void acquire(KThread thread);
+    public void acquire(KThread thread) {
+    }
 
     /**
      * Print out all the threads waiting for access, in no particular order.
      */
-    public abstract void print();
+    public void print() {
+    }
 }

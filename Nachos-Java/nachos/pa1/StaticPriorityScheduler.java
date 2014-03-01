@@ -1,5 +1,6 @@
-package nachos.threads;
+package nachos.pa1;
 
+import nachos.threads.*;
 import nachos.machine.*;
 
 /**
@@ -7,11 +8,11 @@ import nachos.machine.*;
  *
  * @see	nachos.threads.ThreadQueue
  */
-public abstract class Scheduler {
+public class StaticPriorityScheduler extends Scheduler{
     /**
      * Allocate a new scheduler.
      */
-    public Scheduler() {
+    public StaticPriorityScheduler() {
     }
     
     /**
@@ -50,7 +51,9 @@ public abstract class Scheduler {
      *					threads that are waiting on this queue.
      * @return	a new thread queue.
      */
-    public abstract ThreadQueue newThreadQueue(boolean transferPriority);
+    public StaticPriorityQueue newThreadQueue(boolean transferPriority) {
+        return new StaticPriorityQueue();
+    }
 
     /**
      * Get the priority of the specified thread. Must be called with
