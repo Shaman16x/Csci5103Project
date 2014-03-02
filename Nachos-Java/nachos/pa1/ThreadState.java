@@ -48,8 +48,8 @@ public class ThreadState {
 	 * @return	the effective priority of the associated thread.
 	 */
 	public int getEffectivePriority() {
-	    // implement me
-	    return priority+waitTime-runTime;
+	    int ep = priority+waitTime-runTime;
+	    if(ep > max
 	}
 
 	/**

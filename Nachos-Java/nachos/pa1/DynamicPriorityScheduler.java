@@ -13,11 +13,11 @@ public class DynamicPriorityScheduler extends Scheduler{
 
 	protected static ArrayList<ThreadState> states = new ArrayList<ThreadState>();
 
-	protected int maxPriorityValue = 10;
-	protected int minPriorityValue = 0;
+	protected static int maxPriorityValue = 10;
+	protected static int minPriorityValue = 0;
 
     // for debugging purposes
-    public int getMaxPriorityValue(){
+    public static int getMaxPriorityValue(){
         return maxPriorityValue;
     }
 
@@ -132,8 +132,21 @@ public class DynamicPriorityScheduler extends Scheduler{
      * @return	the thread's effective priority.
      */
     public int getEffectivePriority(KThread thread) {
-	Lib.assertTrue(Machine.interrupt().disabled());
-    return thread.getEffectivePriority();
+        int ep=maxPriorityValue;
+        boolean found = false;
+        for(ThreadState s:states)
+            if(s.getThread().compareTo(thread)==0){
+                ep = s.getEffectivePriority();
+                found = true;
+            }
+        if(!found)
+            states.add(new ThreadState(thread, maxPriorityValue));
+        if(ep>maxPriorityValue)
+            return maxPriorityValue;
+        else if(ep<minPriorityValue)
+            return minPriorityValue;
+        else
+            return ep;
     }
 
     /**
