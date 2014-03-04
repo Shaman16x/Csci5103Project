@@ -42,6 +42,7 @@ import java.util.*;
 public class DynamicPriorityQueue extends ThreadQueue{
 	
 	protected ArrayList<ThreadState> queue = new ArrayList<ThreadState>();
+	//int prevTime:stores the previous time call.
 
     /**
      * Notify this thread queue that the specified thread is waiting for
@@ -72,6 +73,8 @@ public class DynamicPriorityQueue extends ThreadQueue{
             if(s.getEffectivePriorityPriority() < queue.get(i).getEffectivePriorityPriority())
                 break;
         queue.add(i,s);
+        
+        //update priorities of all thread states based on current time and prevTime and time units
     }
 
     /**
@@ -91,6 +94,8 @@ public class DynamicPriorityQueue extends ThreadQueue{
         if(queue.isEmpty())
             return null;
         return queue.remove(0).getThread();
+        
+        //update priorities of all thread states based on current time and prevTime and time units
     }
 
     /**
@@ -110,6 +115,8 @@ public class DynamicPriorityQueue extends ThreadQueue{
         for(int i=0; i<queue.size(); i++)
             if(thread.compareTo(queue.get(i).getThread()) == 0)
                 queue.remove(i);
+                
+        //update priorities of all thread states based on current time and prevTime and time units
     }
 
     /**
