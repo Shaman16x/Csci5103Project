@@ -79,6 +79,10 @@ public class ThreadState {
     public String toString() {
 	return thread.toString() + ":" + priority;
     }
+    
+    public String getStats(){
+        return "Done!!!!";
+    }
     /*
 	/**
 	 * Called when <tt>waitForAccess(thread)</tt> (where <tt>thread</tt> is
@@ -113,6 +117,7 @@ public class ThreadState {
 
     protected long runTime = 0;
     protected long waitTime = 0;
+    protected long startTime = System.nanoTime();
     protected QueueStatus status = QueueStatus.LIMBO;
 	/** The thread with which this object is associated. */	   
 	protected KThread thread;

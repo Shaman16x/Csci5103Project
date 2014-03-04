@@ -15,7 +15,8 @@ public class DynamicPriorityScheduler extends Scheduler{
 
 	protected static int maxPriorityValue = 10;
 	protected static int minPriorityValue = 0;
-    protected static long prevTime = System.nanoTime();                     //stores the previous time call.
+    protected long startTime = System.nanoTime();
+    protected long prevTime = System.nanoTime();                     //stores the previous time call.
     protected static int agingTime = 10;
 
     // for debugging purposes
@@ -25,6 +26,11 @@ public class DynamicPriorityScheduler extends Scheduler{
     
     public static int getMinPriorityValue(){
         return minPriorityValue;
+    }
+
+    // gets the age of the scheduler in ms
+    public long getSchedulerTime() {
+        return (System.nanoTime() - startTime) / 1000;
     }
 
     /**
@@ -254,5 +260,10 @@ public class DynamicPriorityScheduler extends Scheduler{
      */
     public boolean decreasePriority() {
 	return false;
+    }
+    
+    public void printScheduled(KThread thread){
+        ThreadState ts = getThreadState(thread);
+        System.out.println(getSchedulerTime() + "," + thread.getName()+ "," + ts.getPriority());
     }
 }

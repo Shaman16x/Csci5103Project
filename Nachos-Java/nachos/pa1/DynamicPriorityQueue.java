@@ -99,6 +99,9 @@ public class DynamicPriorityQueue extends ThreadQueue{
         if(queue.isEmpty())
             return null;
         KThread thread = queue.remove(0).getThread();
+        
+        sched.printScheduled(thread);
+        
         return thread;
         
         //update priorities of all thread states based on current time and prevTime and time units
@@ -132,4 +135,6 @@ public class DynamicPriorityQueue extends ThreadQueue{
 		for(ThreadState s:queue)
             System.out.println(s.getThread());
     }
+    
+    
 }
