@@ -10,6 +10,12 @@ import nachos.threads.KThread;
 
 
 public class ThreadState {
+    
+    
+    public enum QueueStatus{
+        INQUEUE, CURRENT, LIMBO
+    }
+    
 	/**
 	 * Allocate a new <tt>ThreadState</tt> object and associate it with the
 	 * specified thread.
@@ -48,8 +54,7 @@ public class ThreadState {
 	 * @return	the effective priority of the associated thread.
 	 */
 	public int getEffectivePriority() {
-	    int ep = priority+waitTime-runTime;
-	    if(ep > max
+        return getPriority();
 	}
 
 	/**
@@ -101,6 +106,7 @@ public class ThreadState {
 
     protected int runTime = 0;
     protected int waitTime = 0;
+    protected QueueStatus status = QueueStatus.LIMBO;
 	/** The thread with which this object is associated. */	   
 	protected KThread thread;
 	/** The priority of the associated thread. */
