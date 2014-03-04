@@ -31,6 +31,7 @@ network = 	NetKernel NetProcess PostOffice MailMessage
 
 pa1 =		StaticPriorityScheduler StaticPriorityQueue \
 			DynamicPriorityScheduler DynamicPriorityQueue \
+			MultiLevelScheduler MultiLevelQueue \
 			ThreadState \
 			SchedTest1
 

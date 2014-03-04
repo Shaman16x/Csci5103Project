@@ -44,7 +44,13 @@ public class MultiLevelQueue extends ThreadQueue{
 	protected ArrayList<ThreadState> queue0 = new ArrayList<ThreadState>();
     protected ArrayList<ThreadState> queue1 = new ArrayList<ThreadState>();
     protected ArrayList<ThreadState> queue2 = new ArrayList<ThreadState>();
+    protected MultiLevelScheduler parentScheduler;
 	
+
+
+    public void setParentScheduler(MultiLevelScheduler sch){
+        parentScheduler = sch;
+    }
 
     /**
      * Notify this thread queue that the specified thread is waiting for
@@ -68,10 +74,8 @@ public class MultiLevelQueue extends ThreadQueue{
      * @param	thread	the thread waiting for access.
      */
     public void waitForAccess(KThread thread){
-        DynamicPriorityScheduler sched = new DynamicPriorityScheduler();
-        int i=0;
-        ThreadState s = sched.getThreadState(thread);
-        sched.updatePriorities(KThread.currentThread());
+        ThreadState s = parentScheduler.getThreadState(thread);
+        parentScheduler.updatePriorities(KThread.currentThread());
         updateQueues();
         
         if(s.getEffectivePriority() <= 10)
@@ -98,8 +102,7 @@ public class MultiLevelQueue extends ThreadQueue{
      *		are no threads waiting.
      */
     public KThread nextThread() {
-        DynamicPriorityScheduler sched = new DynamicPriorityScheduler();
-        sched.updatePriorities(KThread.currentThread());
+        parentScheduler.updatePriorities(KThread.currentThread());
         updateQueues();
         KThread thread = null;
         if(!queue0.isEmpty())
@@ -110,7 +113,7 @@ public class MultiLevelQueue extends ThreadQueue{
             thread = queue2.remove(0).getThread();
         
         if(thread != null)
-            sched.printScheduled(thread);
+            parentScheduler.printScheduledThread(thread);
         
         return thread;
     }
