@@ -22,6 +22,10 @@ public class DynamicPriorityScheduler extends Scheduler{
     public static int getMaxPriorityValue(){
         return maxPriorityValue;
     }
+    
+    public static int getMinPriorityValue(){
+        return minPriorityValue;
+    }
 
     /**
      * Allocate a new scheduler.

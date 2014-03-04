@@ -54,7 +54,14 @@ public class ThreadState {
 	 * @return	the effective priority of the associated thread.
 	 */
 	public int getEffectivePriority() {
-        return priority + (int)(runTime - waitTime)/(1000*DynamicPriorityScheduler.agingTime);
+        int ep = priority + (int)(runTime - waitTime)/(1000*DynamicPriorityScheduler.agingTime);
+        
+        if(ep > DynamicPriorityScheduler.getMaxPriorityValue())
+            return DynamicPriorityScheduler.getMaxPriorityValue();
+        else if(ep < DynamicPriorityScheduler.getMinPriorityValue())
+            return DynamicPriorityScheduler.getMinPriorityValue();
+        else
+            return ep;
 	}
 
 	/**
