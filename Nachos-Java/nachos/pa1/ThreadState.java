@@ -54,7 +54,7 @@ public class ThreadState {
 	 * @return	the effective priority of the associated thread.
 	 */
 	public int getEffectivePriority() {
-        return getPriority();
+        return priority + (int)(runTime - waitTime)/(1000*DynamicPriorityScheduler.agingTime);
 	}
 
 	/**
@@ -104,8 +104,8 @@ public class ThreadState {
 	}	
     */
 
-    protected int runTime = 0;
-    protected int waitTime = 0;
+    protected long runTime = 0;
+    protected long waitTime = 0;
     protected QueueStatus status = QueueStatus.LIMBO;
 	/** The thread with which this object is associated. */	   
 	protected KThread thread;

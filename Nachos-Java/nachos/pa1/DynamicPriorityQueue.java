@@ -71,11 +71,11 @@ public class DynamicPriorityQueue extends ThreadQueue{
         ThreadState s = sched.getThreadState(thread);
         
         for(i=0; i<queue.size(); i++)
-            if(s.getEffectivePriorityPriority() < queue.get(i).getEffectivePriorityPriority())
+            if(s.getEffectivePriority() < queue.get(i).getEffectivePriority())
                 break;
         queue.add(i,s);
         sched.updatePriorities(KThread.currentThread());
-        s.status = INQUEUE;
+        s.status = ThreadState.QueueStatus.INQUEUE;
         //update priorities of all thread states based on current time and prevTime and time units
     }
 

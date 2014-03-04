@@ -15,7 +15,7 @@ public class DynamicPriorityScheduler extends Scheduler{
 
 	protected static int maxPriorityValue = 10;
 	protected static int minPriorityValue = 0;
-    protected static int prevTime;   //stores the previous time call.
+    protected static long prevTime = System.nanoTime();                     //stores the previous time call.
     protected static int agingTime = 10;
 
     // for debugging purposes
@@ -161,24 +161,23 @@ public class DynamicPriorityScheduler extends Scheduler{
      * waitting threads increase priority (decrease value)
      */
     public void updatePriorities(KThread currThread){
-        int time = java.Time - prevTime;
-        int priorityChange = time/agingTime;
+        long time = System.nanoTime() - prevTime;
+        prevTime = System.nanoTime();
         
         for(ThreadState s:states){
-            if(s.status == INQUEUE){
+            if(s.status == ThreadState.QueueStatus.INQUEUE){
                 s.waitTime += time;
-                s.priority -= priorityChange;
             }
-            else if(s.status == CURRENT){
+            else if(s.status == ThreadState.QueueStatus.CURRENT){
                 s.runTime += time;
-                s.priority += priorityChange;
                 if(s.thread.compareTo(currThread) != 0){
-                    s.status = LIMBO;
+                    s.status = ThreadState.QueueStatus.LIMBO;
                 }
             }
+        }
             
         ThreadState st = getThreadState(currThread);
-        st.status = CURRENT;
+        st.status = ThreadState.QueueStatus.CURRENT;
     }
 
     /**
