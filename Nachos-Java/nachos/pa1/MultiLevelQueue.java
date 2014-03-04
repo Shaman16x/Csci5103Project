@@ -74,9 +74,9 @@ public class MultiLevelQueue extends ThreadQueue{
         sched.updatePriorities(KThread.currentThread());
         updateQueues();
         
-        if(s.getPriority() <= 10)
+        if(s.getEffectivePriority() <= 10)
             queue0.add(s);
-        else if(s.getPriority() <= 20)
+        else if(s.getEffectivePriority() <= 20)
             queue1.add(s);
         else
             queue2.add(s);
@@ -154,14 +154,14 @@ public class MultiLevelQueue extends ThreadQueue{
     
     protected void updateQueues(){
         for(ThreadState s:queue2)
-            if(!(s.getPriority()>20)){
+            if(s.getEffectivePriority()<=20){
                 for(int i=0; i<queue2.size(); i++)
                     if(queue2.get(i).thread.compareTo(s.thread)==0){
                         s = queue2.remove(i);
                         break;
                     }
                 if(s != null){
-                    if(s.getPriority()>10)
+                    if(s.getEffectivePriority()>10)
                         queue1.add(s);
                     else
                         queue0.add(s);
@@ -169,7 +169,7 @@ public class MultiLevelQueue extends ThreadQueue{
             }
             
         for(ThreadState s:queue1)
-            if(!(s.getPriority()>10)){
+            if(s.getEffectivePriority()<=10){
                 for(int i=0; i<queue1.size(); i++)
                     if(queue1.get(i).thread.compareTo(s.thread)==0){
                         s = queue1.remove(i);
