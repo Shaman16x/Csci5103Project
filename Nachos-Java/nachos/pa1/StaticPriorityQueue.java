@@ -41,7 +41,9 @@ import java.util.*;
  */
 public class StaticPriorityQueue extends ThreadQueue{
 	
+    // list that keeps track of priorities
 	protected ArrayList<ThreadState> queue = new ArrayList<ThreadState>();
+    protected StaticPriorityScheduler parentScheduler;
 
     /**
      * Notify this thread queue that the specified thread is waiting for
@@ -72,6 +74,10 @@ public class StaticPriorityQueue extends ThreadQueue{
             if(s.getPriority() < queue.get(i).getPriority())
                 break;
         queue.add(i,s);
+    }
+    
+    public void setParentScheduler(StaticPriorityScheduler sch){
+        parentScheduler = sch;
     }
 
     /**

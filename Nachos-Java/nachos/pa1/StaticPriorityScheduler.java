@@ -5,7 +5,9 @@ import nachos.machine.*;
 import java.util.*;
 
 /**
- * Coordinates a group of thread queues of the same kind.
+ * Static priority scheduler used for scheduling thread
+ * threads are assigned a priority once and are 
+ * ran based on that order
  *
  * @see	nachos.threads.ThreadQueue
  */
@@ -13,12 +15,20 @@ public class StaticPriorityScheduler extends Scheduler{
 
 	protected static ArrayList<ThreadState> states = new ArrayList<ThreadState>();
 
-	protected static int maxPriorityValue = 10;
-	protected static int minPriorityValue = 0;
-
+	protected int maxPriorityValue = 10;
+	protected int minPriorityValue = 0;
+    protected long startTime = System.nanoTime();           // beginning of scheduler's life
+    protected long prevTime = System.nanoTime();            //stores the previous time call.
+    
+    
     // for debugging purposes
-    public static int getMaxPriorityValue(){
+    public int getMaxPriorityValue(){
         return maxPriorityValue;
+    }
+
+    // gets the age of the scheduler in ms
+    public int getSchedulerTime() {
+        return (int) ((System.nanoTime() - startTime) / 1000);
     }
 
     /**
@@ -78,28 +88,28 @@ public class StaticPriorityScheduler extends Scheduler{
      * @return	the thread's priority.
      */
     public int getPriority(KThread thread) {
-		Lib.assertTrue(Machine.interrupt().disabled());
+        Lib.assertTrue(Machine.interrupt().disabled());
 
-		ThreadState s = getThreadState(thread);
-		
-		return s.getPriority();
+        ThreadState s = getThreadState(thread);
+        
+        return s.getPriority();
     }
-	
-	public ThreadState getThreadState(KThread thread){
-		ThreadState state;
-	
-		for(ThreadState s : states){
-			if(s.getThread().compareTo(thread) == 0){
-				return s;
-			}
-		}
 
-		state = new ThreadState(thread,maxPriorityValue);
-		states.add(state);
+    public ThreadState getThreadState(KThread thread){
+        ThreadState state;
 
-		return state;
-	}
-	
+        for(ThreadState s : states){
+            if(s.getThread().compareTo(thread) == 0){
+                return s;
+            }
+        }
+
+        state = new ThreadState(thread,maxPriorityValue, maxPriorityValue, 0); 
+        states.add(state);
+
+        return state;
+    }
+
     /**
      * Get the priority of the current thread. Equivalent to
      * <tt>getPriority(KThread.currentThread())</tt>.
@@ -107,7 +117,7 @@ public class StaticPriorityScheduler extends Scheduler{
      * @return	the current thread's priority.
      */
     public int getPriority() {
-	return getPriority(KThread.currentThread());
+        return getPriority(KThread.currentThread());
     }
 
     /**
@@ -132,8 +142,8 @@ public class StaticPriorityScheduler extends Scheduler{
      * @return	the thread's effective priority.
      */
     public int getEffectivePriority(KThread thread) {
-	Lib.assertTrue(Machine.interrupt().disabled());
-	return 0;
+        Lib.assertTrue(Machine.interrupt().disabled());
+        return 0;
     }
 
     /**
@@ -154,22 +164,22 @@ public class StaticPriorityScheduler extends Scheduler{
      * @param	priority	the new priority.
      */
     public void setPriority(KThread thread, int priority) {
-		Lib.assertTrue(Machine.interrupt().disabled());
-		boolean found = false;
-		ThreadState state;
+        Lib.assertTrue(Machine.interrupt().disabled());
+        boolean found = false;
+        ThreadState state;
 
-		if(priority>maxPriorityValue) priority = maxPriorityValue;
-		if(priority<minPriorityValue) priority = minPriorityValue;
+        if(priority>maxPriorityValue) priority = maxPriorityValue;
+        if(priority<minPriorityValue) priority = minPriorityValue;
 
-		for(ThreadState s : states){
-			if(s.getThread().compareTo(thread) == 0){
-				found = true;
-				s.setPriority(priority);
-			}
-		}
+        for(ThreadState s : states){
+            if(s.getThread().compareTo(thread) == 0){
+                found = true;
+                s.setPriority(priority);
+            }
+        }
 
-		if(!found){
-			state = new ThreadState(thread, priority);
+        if(!found){
+            state = new ThreadState(thread, priority, maxPriorityValue, 0);
             states.add(state);
 		}
     }
@@ -184,27 +194,13 @@ public class StaticPriorityScheduler extends Scheduler{
 	setPriority(KThread.currentThread(), priority);
     }
 
-    /**
-     * If possible, raise the priority of the current thread in some
-     * scheduler-dependent way.
-     *
-     * @return	<tt>true</tt> if the scheduler was able to increase the current
-     *		thread's
-     *		priority.
+    /*
+     * Defined to implement scheduler
      */
     public boolean increasePriority() {
-	return false;
+        return false;
     }
-
-    /**
-     * If possible, lower the priority of the current thread user in some
-     * scheduler-dependent way, preferably by the same amount as would a call
-     * to <tt>increasePriority()</tt>.
-     *
-     * @return	<tt>true</tt> if the scheduler was able to decrease the current
-     *		thread's priority.
-     */
     public boolean decreasePriority() {
-	return false;
+        return false;
     }
 }
