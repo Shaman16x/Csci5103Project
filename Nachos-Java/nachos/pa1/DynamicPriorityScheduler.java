@@ -33,6 +33,23 @@ public class DynamicPriorityScheduler extends Scheduler{
         return (System.nanoTime() - startTime) / 1000;
     }
 
+    //TODO print to file
+    
+    // prints stats about the scheduled thread
+    public void printScheduledThread(KThread thread){
+        ThreadState ts = getThreadState(thread);
+        System.out.println(getSchedulerTime() + "," + thread.getName()+ "," + ts.getPriority());
+    }
+
+    // prints the final stats of a thread that has executed
+    public void printThreadStats(KThread thread){
+        System.out.println(getThreadState(thread).getStats());
+    }
+
+    // Prints Final statistics of the scheduler
+    public void printFinalStats(){
+        //TODO: write me
+    }
     /**
      * Allocate a new scheduler.
      */
@@ -83,7 +100,9 @@ public class DynamicPriorityScheduler extends Scheduler{
      * @return	a new thread queue.
      */
     public DynamicPriorityQueue newThreadQueue(boolean transferPriority) {
-        return new DynamicPriorityQueue();
+        DynamicPriorityQueue q = new DynamicPriorityQueue();
+        q.setParentScheduler(this);
+        return q;
     }
 
     /**
@@ -94,28 +113,28 @@ public class DynamicPriorityScheduler extends Scheduler{
      * @return	the thread's priority.
      */
     public int getPriority(KThread thread) {
-		Lib.assertTrue(Machine.interrupt().disabled());
+        Lib.assertTrue(Machine.interrupt().disabled());
 
-		ThreadState s = getThreadState(thread);
-		
-		return s.getPriority();
+        ThreadState s = getThreadState(thread);
+        
+        return s.getPriority();
     }
-	
-	public ThreadState getThreadState(KThread thread){
-		ThreadState state;
-	
-		for(ThreadState s : states){
-			if(s.getThread().compareTo(thread) == 0){
-				return s;
-			}
-		}
 
-		state = new ThreadState(thread,maxPriorityValue);
-		states.add(state);
+    public ThreadState getThreadState(KThread thread){
+        ThreadState state;
 
-		return state;
-	}
-	
+        for(ThreadState s : states){
+            if(s.getThread().compareTo(thread) == 0){
+                return s;
+            }
+        }
+
+        state = new ThreadState(thread,maxPriorityValue, maxPriorityValue, agingTime);
+        states.add(state);
+
+        return state;
+    }
+
     /**
      * Get the priority of the current thread. Equivalent to
      * <tt>getPriority(KThread.currentThread())</tt>.
@@ -123,7 +142,7 @@ public class DynamicPriorityScheduler extends Scheduler{
      * @return	the current thread's priority.
      */
     public int getPriority() {
-	return getPriority(KThread.currentThread());
+        return getPriority(KThread.currentThread());
     }
 
     /**
@@ -156,7 +175,7 @@ public class DynamicPriorityScheduler extends Scheduler{
                 found = true;
             }
         if(!found)
-            states.add(new ThreadState(thread, maxPriorityValue));
+            states.add(new ThreadState(thread, maxPriorityValue, maxPriorityValue, agingTime));
         if(ep>maxPriorityValue)
             return maxPriorityValue;
         else if(ep<minPriorityValue)
@@ -208,24 +227,24 @@ public class DynamicPriorityScheduler extends Scheduler{
      * @param	priority	the new priority.
      */
     public void setPriority(KThread thread, int priority) {
-		Lib.assertTrue(Machine.interrupt().disabled());
-		boolean found = false;
-		ThreadState state;
+        Lib.assertTrue(Machine.interrupt().disabled());
+        boolean found = false;
+        ThreadState state;
 
-		if(priority>maxPriorityValue) priority = maxPriorityValue;
-		if(priority<minPriorityValue) priority = minPriorityValue;
+        if(priority>maxPriorityValue) priority = maxPriorityValue;
+        if(priority<minPriorityValue) priority = minPriorityValue;
 
-		for(ThreadState s : states){
-			if(s.getThread().compareTo(thread) == 0){
-				found = true;
-				s.setPriority(priority);
-			}
-		}
+        for(ThreadState s : states){
+            if(s.getThread().compareTo(thread) == 0){
+                found = true;
+                s.setPriority(priority);
+            }
+        }
 
-		if(!found){
-			state = new ThreadState(thread, priority);
+        if(!found){
+            state = new ThreadState(thread, priority, maxPriorityValue, agingTime);
             states.add(state);
-		}
+        }
     }
 
     /**
@@ -235,7 +254,7 @@ public class DynamicPriorityScheduler extends Scheduler{
      * @param	priority	the new priority.
      */
     public void setPriority(int priority) {
-	setPriority(KThread.currentThread(), priority);
+        setPriority(KThread.currentThread(), priority);
     }
 
     /**
@@ -247,7 +266,7 @@ public class DynamicPriorityScheduler extends Scheduler{
      *		priority.
      */
     public boolean increasePriority() {
-	return false;
+        return false;
     }
 
     /**
@@ -262,8 +281,4 @@ public class DynamicPriorityScheduler extends Scheduler{
 	return false;
     }
     
-    public void printScheduled(KThread thread){
-        ThreadState ts = getThreadState(thread);
-        System.out.println(getSchedulerTime() + "," + thread.getName()+ "," + ts.getPriority());
-    }
 }

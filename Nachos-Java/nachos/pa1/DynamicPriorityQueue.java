@@ -40,9 +40,9 @@ import java.util.*;
  * All thread queue methods must be invoked with <b>interrupts disabled</b>.
  */
 public class DynamicPriorityQueue extends ThreadQueue{
-	
-	protected ArrayList<ThreadState> queue = new ArrayList<ThreadState>();
-	
+
+    protected ArrayList<ThreadState> queue = new ArrayList<ThreadState>();
+    protected DynamicPriorityScheduler parentScheduler;
 
     /**
      * Notify this thread queue that the specified thread is waiting for
@@ -66,17 +66,21 @@ public class DynamicPriorityQueue extends ThreadQueue{
      * @param	thread	the thread waiting for access.
      */
     public void waitForAccess(KThread thread){
-        DynamicPriorityScheduler sched = new DynamicPriorityScheduler();
         int i=0;
-        ThreadState s = sched.getThreadState(thread);
+        ThreadState s = parentScheduler.getThreadState(thread);
         
         for(i=0; i<queue.size(); i++)
             if(s.getEffectivePriority() < queue.get(i).getEffectivePriority())
                 break;
         queue.add(i,s);
-        sched.updatePriorities(KThread.currentThread());
+        parentScheduler.updatePriorities(KThread.currentThread());
         s.status = ThreadState.QueueStatus.INQUEUE;
         //update priorities of all thread states based on current time and prevTime and time units
+    }
+
+    // sets the scheduler that made this queue
+    public void setParentScheduler(DynamicPriorityScheduler sch){
+        parentScheduler = sch;
     }
 
     /**
@@ -93,14 +97,13 @@ public class DynamicPriorityQueue extends ThreadQueue{
      *		are no threads waiting.
      */
     public KThread nextThread() {
-        DynamicPriorityScheduler sched = new DynamicPriorityScheduler();
-        sched.updatePriorities(KThread.currentThread());
+        parentScheduler.updatePriorities(KThread.currentThread());
         
         if(queue.isEmpty())
             return null;
         KThread thread = queue.remove(0).getThread();
         
-        sched.printScheduled(thread);
+        parentScheduler.printScheduledThread(thread);
         
         return thread;
         

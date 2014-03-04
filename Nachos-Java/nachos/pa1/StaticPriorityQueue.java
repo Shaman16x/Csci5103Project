@@ -40,9 +40,9 @@ import java.util.*;
  * All thread queue methods must be invoked with <b>interrupts disabled</b>.
  */
 public class StaticPriorityQueue extends ThreadQueue{
-	
+
     // list that keeps track of priorities
-	protected ArrayList<ThreadState> queue = new ArrayList<ThreadState>();
+    protected ArrayList<ThreadState> queue = new ArrayList<ThreadState>();
     protected StaticPriorityScheduler parentScheduler;
 
     /**
@@ -122,7 +122,7 @@ public class StaticPriorityQueue extends ThreadQueue{
      * Print out all the threads waiting for access, in no particular order.
      */
     public void print() {
-		for(ThreadState s:queue)
+        for(ThreadState s:queue)
             System.out.println(s.getThread());
     }
 }

@@ -31,6 +31,24 @@ public class StaticPriorityScheduler extends Scheduler{
         return (int) ((System.nanoTime() - startTime) / 1000);
     }
 
+    //TODO: allow for printing to a file
+    
+    // prints stats about the scheduled thread
+    public void printScheduledThread(KThread thread){
+        ThreadState ts = getThreadState(thread);
+        System.out.println(getSchedulerTime() + "," + thread.getName()+ "," + ts.getPriority());
+    }
+
+    // prints the final stats of a thread that has executed
+    public void printThreadStats(KThread thread){
+        System.out.println(getThreadState(thread).getStats());
+    }
+
+    // Prints Final statistics of the scheduler
+    public void printFinalStats(){
+        //TODO: write me
+    }
+
     /**
      * Allocate a new scheduler.
      */
@@ -77,7 +95,9 @@ public class StaticPriorityScheduler extends Scheduler{
      * @return	a new thread queue.
      */
     public StaticPriorityQueue newThreadQueue(boolean transferPriority) {
-        return new StaticPriorityQueue();
+        StaticPriorityQueue q = new StaticPriorityQueue();
+        q.setParentScheduler(this);
+        return q;
     }
 
     /**
@@ -191,7 +211,7 @@ public class StaticPriorityScheduler extends Scheduler{
      * @param	priority	the new priority.
      */
     public void setPriority(int priority) {
-	setPriority(KThread.currentThread(), priority);
+        setPriority(KThread.currentThread(), priority);
     }
 
     /*
