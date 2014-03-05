@@ -63,7 +63,6 @@ public class StaticPriorityScheduler extends Scheduler{
         }
         else
             System.out.println(thread.getStats());
-        
     }
 
     // Prints Final statistics of the scheduler
@@ -89,9 +88,6 @@ public class StaticPriorityScheduler extends Scheduler{
                 writer.close();
             }catch(IOException e){}
         }
-        else
-            System.out.println("did this happen");
-        
     }
     
     /**
