@@ -70,7 +70,7 @@ public class ThreadState {
 	 * @return	the effective priority of the associated thread.
 	 */
 	public int getEffectivePriority() {
-        int ep = priority + (int)(runTime - waitTime)/(1000);
+        int ep = priority + (int)(runTime - waitTime)/(10^6);
         
         if(ep > maxPriorityValue)
             return maxPriorityValue;
@@ -100,8 +100,8 @@ public class ThreadState {
     
     // prints the final stats of a thread
     public String getStats(){
-        long run = runTime/1000;
-        long wait = waitTime/1000;
+        long run = runTime/1000000;
+        long wait = waitTime/1000000;
         long end = startTime + run + wait;
         return thread.getName() + "," + startTime + "," + run + "," + wait + "," + end;     //TODO: use getID
     }

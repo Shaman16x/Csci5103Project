@@ -69,6 +69,7 @@ public class StaticPriorityQueue extends ThreadQueue{
     public void waitForAccess(KThread thread){
         StaticPriorityScheduler sched = new StaticPriorityScheduler();
         int i=0;
+        parentScheduler.updateThreads(KThread.currentThread());
         ThreadState s = sched.getThreadState(thread);
         for(i=0; i<queue.size(); i++)
             if(s.getPriority() < queue.get(i).getPriority())
@@ -96,7 +97,10 @@ public class StaticPriorityQueue extends ThreadQueue{
     public KThread nextThread() {
         if(queue.isEmpty())
             return null;
-        return queue.remove(0).getThread();
+        ThreadState s = queue.remove(0);
+        parentScheduler.updateThreads(s.getThread());
+        parentScheduler.printScheduledThread(s);
+        return s.getThread();
     }
 
     /**

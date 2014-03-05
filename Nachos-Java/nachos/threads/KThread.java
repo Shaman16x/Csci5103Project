@@ -404,8 +404,13 @@ public class KThread {
     public static void selfTest() {
 	Lib.debug(dbgThread, "Enter KThread.selfTest");
 
-    if(Config.getBoolean("runTests"))
-        new KThread(new SchedTest1(0)).setName("Schedule Test 1").fork();
+    if(Config.getBoolean("runTests")){
+        //new KThread(new SchedTest1(0)).setName("Schedule Test 1").fork();
+        int num= Integer.parseInt(Config.getString("Kernel.numThreads"));
+        for(int i=0; i<num; i++){
+            new KThread(new PingTest(i)).setName("forked thread").fork();
+        }
+    }
     else {
         int num= Integer.parseInt(Config.getString("Kernel.numThreads"));
         for(int i=0; i<num; i++){

@@ -33,7 +33,6 @@ pa1 =		StaticPriorityScheduler StaticPriorityQueue \
 			DynamicPriorityScheduler DynamicPriorityQueue \
 			MultiLevelScheduler MultiLevelQueue \
 			ThreadState \
-			SchedTest1
 
 ALLDIRS = machine security ag threads userprog vm network pa1
 

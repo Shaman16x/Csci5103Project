@@ -28,25 +28,25 @@ public class StaticPriorityScheduler extends Scheduler{
 
     // gets the age of the scheduler in ms
     public int getSchedulerTime() {
-        return (int) ((System.nanoTime() - startTime) / 1000);
+        return (int) ((System.nanoTime() - startTime) / 1000000);
     }
 
     //TODO: allow for printing to a file
     
     // prints stats about the scheduled thread
-    public void printScheduledThread(KThread thread){
-        ThreadState ts = getThreadState(thread);
-        System.out.println(getSchedulerTime() + "," + thread.getName()+ "," + ts.getPriority());
+    public void printScheduledThread(ThreadState thread){
+        System.out.println(getSchedulerTime() + "," + thread.getThread().getName()+ "," + thread.getPriority());
     }
 
     // prints the final stats of a thread that has executed
-    public void printThreadStats(KThread thread){
-        System.out.println(getThreadState(thread).getStats());
+    public void printThreadStats(ThreadState thread){
+        System.out.println(thread.getStats());
     }
 
     // Prints Final statistics of the scheduler
     public void printFinalStats(){
         //TODO: write me
+        System.out.println("Done!");
     }
 
     /**
@@ -201,7 +201,7 @@ public class StaticPriorityScheduler extends Scheduler{
         if(!found){
             state = new ThreadState(thread, priority, maxPriorityValue, 0);
             states.add(state);
-		}
+        }
     }
 
     /**
@@ -212,6 +212,32 @@ public class StaticPriorityScheduler extends Scheduler{
      */
     public void setPriority(int priority) {
         setPriority(KThread.currentThread(), priority);
+    }
+
+    /* 
+     * updates ThreadStates base on how much time has changed
+     * updates wait and running times
+     * determines if a thread has finished
+     */
+    public void updateThreads(KThread currThread){
+        long time = System.nanoTime() - prevTime;
+        prevTime = System.nanoTime();
+        
+        for(ThreadState s:states){
+            if(s.status == ThreadState.QueueStatus.INQUEUE){
+                s.waitTime += time;
+            }
+            else if(s.status == ThreadState.QueueStatus.CURRENT){
+                s.runTime += time;
+                if(s.thread.compareTo(currThread) != 0){
+                    printThreadStats(s);
+                    s.status = ThreadState.QueueStatus.LIMBO;
+                }
+            }
+        }
+            
+        ThreadState st = getThreadState(currThread);
+        st.status = ThreadState.QueueStatus.CURRENT;
     }
 
     /*
