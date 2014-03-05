@@ -1,7 +1,7 @@
 Design Decisions
 -----------------------------------------------------------------------
-Kyle Michaels
-Jerimiah Thomas
+Jeremiah Thomas:4145047
+Kyle Michaels:3914066
 
 
 General Overview
