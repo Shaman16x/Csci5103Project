@@ -99,11 +99,18 @@ public final class Machine {
      * Print stats, and terminate Nachos.
      */
     public static void halt() {
-	System.out.print("Machine halting!\n\n");   
-	stats.print();
-    if(Config.getString("ThreadedKernel.scheduler").equals("StaticPriorityScheduler")){
+    if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
         ((StaticPriorityScheduler) ThreadedKernel.scheduler).printFinalStats();
     }
+    else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
+        ((DynamicPriorityScheduler) ThreadedKernel.scheduler).printFinalStats();
+    }
+    else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
+        ((MultiLevelScheduler) ThreadedKernel.scheduler).printFinalStats();
+    }
+	System.out.print("Machine halting!\n\n");   
+
+	stats.print();
 	terminate();
     }
 

@@ -67,8 +67,16 @@ public class StaticPriorityScheduler extends Scheduler{
 
     // Prints Final statistics of the scheduler
     public void printFinalStats(){
-        //TODO: write me
-        System.out.println("Done!");
+        if(outfile != null){
+            try{
+            file = new FileWriter(outfile, true);
+            writer = new PrintWriter(file);
+            writer.println("System," + states.size());
+            writer.close();
+            }catch(IOException e){}
+        }
+        else
+            System.out.println("System," + states.size());
     }
 
     /**
