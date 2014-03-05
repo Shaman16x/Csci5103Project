@@ -45,13 +45,12 @@ public class MultiLevelScheduler extends Scheduler{
             try{
             file = new FileWriter(outfile, true);
             writer = new PrintWriter(file);
-            writer.append(getSchedulerTime() + "," + thread.getThread().getName()+ "," + thread.getPriority());
+            writer.println(getSchedulerTime() + "," + thread.getThread().getName() +":"+thread.getThread().getID()+ "," + thread.getPriority());
             writer.close();
             }catch(IOException e){}
         }
         else
-            System.out.println(getSchedulerTime() + "," + thread.getThread().getName()+ "," + thread.getPriority());
-        
+            System.out.println(getSchedulerTime() + "," + thread.getThread().getName()+":"+thread.getThread().getID()+ "," + thread.getPriority());
     }
 
     // prints the final stats of a thread that has executed
@@ -60,7 +59,7 @@ public class MultiLevelScheduler extends Scheduler{
             try{
             file = new FileWriter(outfile, true);
             writer = new PrintWriter(file);
-            writer.append(thread.getStats());
+            writer.println(thread.getStats());
             writer.close();
             }catch(IOException e){}
         }
@@ -84,15 +83,15 @@ public class MultiLevelScheduler extends Scheduler{
         if(ageTime != null)
             agingTime = ageTime;
             
-        String filename = Config.getString("statistics.logfile");
-        if(!filename.equals("")){
+        String filename = Config.getString("statistics.logFile");
+        if(filename != null){
             try{
-            outfile = new File(filename);
-            file = new FileWriter(outfile, true);
-            writer = new PrintWriter(file);
-            writer.close();
+                outfile = new File(filename);
+                file = new FileWriter(outfile);
+                writer = new PrintWriter(file);
+                writer.close();
             }catch(IOException e){}
-        }
+        }     
     }
     
     /**

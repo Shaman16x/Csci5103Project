@@ -407,8 +407,13 @@ public class KThread {
     if(Config.getBoolean("runTests")){
         //new KThread(new SchedTest1(0)).setName("Schedule Test 1").fork();
         int num= Integer.parseInt(Config.getString("Kernel.numThreads"));
-        for(int i=0; i<num; i++){
-            new KThread(new PingTest(i)).setName("forked thread").fork();
+        int p = 1;
+        for(int i=0; i<num; i++,p+=5){
+            KThread thread = new KThread(new PingTest(i));
+            Machine.interrupt().disable();
+            ThreadedKernel.scheduler.setPriority(thread,7-i);
+            Machine.interrupt().enable();
+            thread.setName("forked thread").fork();
         }
     }
     else {

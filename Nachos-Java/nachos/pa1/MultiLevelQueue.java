@@ -104,18 +104,20 @@ public class MultiLevelQueue extends ThreadQueue{
     public KThread nextThread() {
         parentScheduler.updatePriorities(KThread.currentThread());
         updateQueues();
-        KThread thread = null;
+        ThreadState thread = null;
         if(!queue0.isEmpty())
-            thread = queue0.remove(0).getThread();
+            thread = queue0.remove(0);
         else if(!queue1.isEmpty())
-            thread = queue1.remove(0).getThread();
+            thread = queue1.remove(0);
         else if(!queue2.isEmpty())
-            thread = queue2.remove(0).getThread();
+            thread = queue2.remove(0);
         
-        if(thread != null)
+        if(thread != null){
             parentScheduler.printScheduledThread(thread);
+            return thread.getThread();
+        }
+        return null;
         
-        return thread;
     }
 
     /**
