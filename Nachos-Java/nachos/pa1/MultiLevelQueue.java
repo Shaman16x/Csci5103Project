@@ -1,7 +1,7 @@
 package nachos.pa1;
 
 import nachos.threads.*;
-import java.util.*;
+import java.util.ArrayList;
 /**
  * Schedules access to some sort of resource with limited access constraints. A
  * thread queue can be used to share this limited access among multiple
@@ -158,11 +158,52 @@ public class MultiLevelQueue extends ThreadQueue{
     }
     
     protected void updateQueues(){
+        ThreadState ts;
+        for(int i = 0; i < queue0.size(); i++){
+            // move to middle priority level
+            if(queue0.get(i).getEffectivePriority() > 10){
+                queue1.add(queue0.remove(i));
+                i--;    // to maintain position in queue
+            }
+            // move to lowest priority level
+            else if(queue0.get(i).getEffectivePriority() > 20){
+                queue2.add(queue0.remove(i));
+                i--;    // to maintain position in queue
+            }
+        }
+        for(int i = 0; i < queue1.size(); i++){
+            // move to higher priority level
+            if(queue1.get(i).getEffectivePriority() < 11){
+                queue0.add(queue1.remove(i));
+                i--;    // to maintain position in queue
+            }
+            // move to lower priority level
+            else if(queue1.get(i).getEffectivePriority() > 20){
+                queue2.add(queue1.remove(i));
+                i--;    // to maintain position in queue
+            }
+        }
+        for(int i = 0; i < queue2.size(); i++){
+            // move to highest priority level
+            if(queue2.get(i).getEffectivePriority() < 11){
+                //ts = queue2.remove(i);
+                queue0.add(queue2.remove(i));
+                i--;    // to maintain position in queue
+            }
+            // move to middle priority level
+            else if(queue2.get(i).getEffectivePriority() < 21){
+                queue1.add(queue2.remove(i));
+                i--;    // to maintain position in queue
+            }
+        }
+        /*
         for(ThreadState s:queue2)
             if(s.getEffectivePriority()<=20){
                 for(int i=0; i<queue2.size(); i++)
                     if(queue2.get(i).thread.compareTo(s.thread)==0){
+                        System.out.println("Ru-ro!");
                         s = queue2.remove(i);
+                        System.out.println("bluh-blo!");
                         break;
                     }
                 if(s != null){
@@ -172,7 +213,7 @@ public class MultiLevelQueue extends ThreadQueue{
                         queue0.add(s);
                 }
             }
-            
+        
         for(ThreadState s:queue1)
             if(s.getEffectivePriority()<=10){
                 for(int i=0; i<queue1.size(); i++)
@@ -183,5 +224,7 @@ public class MultiLevelQueue extends ThreadQueue{
                 if(s != null)
                     queue0.add(s);
             }
+            */
+        
     }
 }
