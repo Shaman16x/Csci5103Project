@@ -101,11 +101,13 @@ public class StaticPriorityQueue extends ThreadQueue{
      *		are no threads waiting.
      */
     public KThread nextThread() {
+        
         if(queue.isEmpty())
             return null;
         ThreadState s = queue.remove(0);
-        parentScheduler.updateThreads(s.getThread());
         parentScheduler.printScheduledThread(s);
+        parentScheduler.updateThreads(s.getThread());
+        
         return s.getThread();
     }
 

@@ -43,12 +43,12 @@ public class StaticPriorityScheduler extends Scheduler{
             try{
             file = new FileWriter(outfile, true);
             writer = new PrintWriter(file);
-            writer.append(getSchedulerTime() + "," + thread.getThread().getName()+ "," + thread.getPriority());
+            writer.println(getSchedulerTime() + "," + thread.getThread().getName() +":"+thread.getThread().getID()+ "," + thread.getPriority());
             writer.close();
             }catch(IOException e){}
         }
         else
-            System.out.println(getSchedulerTime() + "," + thread.getThread().getName()+ "," + thread.getPriority());
+            System.out.println(getSchedulerTime() + "," + thread.getThread().getName()+":"+thread.getThread().getID()+ "," + thread.getPriority());
     }
 
     // prints the final stats of a thread that has executed
@@ -57,7 +57,7 @@ public class StaticPriorityScheduler extends Scheduler{
             try{
             file = new FileWriter(outfile, true);
             writer = new PrintWriter(file);
-            writer.append(getSchedulerTime() + "," + thread.getThread().getName()+ "," + thread.getPriority());
+            writer.println(thread.getStats());
             writer.close();
             }catch(IOException e){}
         }
@@ -80,7 +80,7 @@ public class StaticPriorityScheduler extends Scheduler{
         if(i != null)
             maxPriorityValue = i;
             
-        String filename = Config.getString("statistics.logfile");
+        String filename = Config.getString("statistics.logFile");
         if(filename != null){
             try{
                 outfile = new File(filename);
@@ -89,6 +89,8 @@ public class StaticPriorityScheduler extends Scheduler{
                 writer.close();
             }catch(IOException e){}
         }
+        else
+            System.out.println("did this happen");
         
     }
     

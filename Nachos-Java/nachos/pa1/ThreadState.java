@@ -103,6 +103,6 @@ public class ThreadState {
         long run = runTime/1000000;
         long wait = waitTime/1000000;
         long end = startTime + run + wait;
-        return thread.getName() + "," + startTime + "," + run + "," + wait + "," + end;     //TODO: use getID
+        return thread.getName()+":"+thread.getID() + "," + startTime + "," + run + "," + wait + "," + end;     //TODO: use getID
     }
 }

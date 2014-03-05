@@ -418,6 +418,10 @@ public class KThread {
         }
     }
     }
+    
+    public int getID(){
+        return id;
+    }
 
     private static final char dbgThread = 't';
 
