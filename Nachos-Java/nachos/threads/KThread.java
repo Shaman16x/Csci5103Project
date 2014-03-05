@@ -408,6 +408,7 @@ public class KThread {
         //new KThread(new SchedTest1(0)).setName("Schedule Test 1").fork();
         int num= Integer.parseInt(Config.getString("Kernel.numThreads"));
         
+        // Create tests for Static Priority
         if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
             for(int i=0; i<num; i++){
                 KThread thread = new KThread(new DelayTest(i, 10));
@@ -416,7 +417,13 @@ public class KThread {
                 Machine.interrupt().enable();
                 thread.setName("SP thread").fork();
             }
+                KThread thread = new KThread(new DelayTest(4, 10));
+                Machine.interrupt().disable();
+                ThreadedKernel.scheduler.setPriority(thread,6);
+                Machine.interrupt().enable();
+                thread.setName("SP thread").fork();
         }
+        // Create tests for Dynamic Priority
         else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.DynamicPriorityScheduler")){
             for(int i=0; i<num; i++){
                 KThread thread = new KThread(new DelayTest(i, 20));
@@ -426,6 +433,7 @@ public class KThread {
                 thread.setName("DP thread").fork();
             }
         }
+        // Create tests for MultiLevel
         else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.MultiLevelScheduler")){
             for(int i=0; i<num; i++){
                 KThread thread = new KThread(new DelayTest(i, 20));
