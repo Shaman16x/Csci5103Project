@@ -85,8 +85,14 @@ public class MultiLevelScheduler extends Scheduler{
             agingTime = ageTime;
             
         String filename = Config.getString("statistics.logfile");
-        if(!filename.equals(""))
+        if(!filename.equals("")){
+            try{
             outfile = new File(filename);
+            file = new FileWriter(outfile, true);
+            writer = new PrintWriter(file);
+            writer.close();
+            }catch(IOException e){}
+        }
     }
     
     /**
