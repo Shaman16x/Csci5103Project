@@ -23,7 +23,9 @@ Why?
 
 Data Structure:
 We decide to use ArrayLists to implement the queue.
-The queue is sorted by inserting ThreadStates at the correct .
+The queue is sorted by inserting ThreadStates at the correct location
+according to which Scheduler is being used.  ArrayLists are easy to manage
+insertions and deletions.
 
 
 
