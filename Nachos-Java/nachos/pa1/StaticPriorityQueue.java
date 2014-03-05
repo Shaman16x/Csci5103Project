@@ -69,7 +69,7 @@ public class StaticPriorityQueue extends ThreadQueue{
      */
     public void waitForAccess(KThread thread){
         int i=0;
-        parentScheduler.updateThreads(KThread.currentThread());
+        parentScheduler.updateThreads(null);
         
         ThreadState s = parentScheduler.getThreadState(thread);
         if(s.status == ThreadState.QueueStatus.NOT_SCHEDULED){

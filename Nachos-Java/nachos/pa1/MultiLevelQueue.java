@@ -74,9 +74,13 @@ public class MultiLevelQueue extends ThreadQueue{
      * @param	thread	the thread waiting for access.
      */
     public void waitForAccess(KThread thread){
-        ThreadState s = parentScheduler.getThreadState(thread);
-        parentScheduler.updatePriorities(KThread.currentThread());
+        parentScheduler.updatePriorities(null);
         updateQueues();
+        ThreadState s = parentScheduler.getThreadState(thread);
+        if(s.status == ThreadState.QueueStatus.NOT_SCHEDULED){
+            s.setStartTime(parentScheduler.getSchedulerTime());
+        }
+        s.status = ThreadState.QueueStatus.INQUEUE;
         
         if(s.getEffectivePriority() <= 10)
             queue0.add(s);
@@ -84,8 +88,6 @@ public class MultiLevelQueue extends ThreadQueue{
             queue1.add(s);
         else
             queue2.add(s);
-        
-        s.status = ThreadState.QueueStatus.INQUEUE;
     }
 
     /**

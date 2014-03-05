@@ -291,15 +291,17 @@ public class StaticPriorityScheduler extends Scheduler{
             }
             else if(s.status == ThreadState.QueueStatus.CURRENT){
                 s.runTime += time;
-                if(s.thread.compareTo(currThread) != 0){
+                if(currThread != null && s.thread.compareTo(currThread) != 0){
                     printThreadStats(s);
                     s.status = ThreadState.QueueStatus.LIMBO;
                 }
             }
         }
             
-        ThreadState st = getThreadState(currThread);
-        st.status = ThreadState.QueueStatus.CURRENT;
+        if(currThread != null){
+            ThreadState st = getThreadState(currThread);
+            st.status = ThreadState.QueueStatus.CURRENT;
+        }
     }
 
     /*

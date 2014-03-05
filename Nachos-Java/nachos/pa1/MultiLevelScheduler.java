@@ -33,8 +33,8 @@ public class MultiLevelScheduler extends Scheduler{
     }
 
     // gets the age of the scheduler in ms
-    public long getSchedulerTime() {
-        return (System.nanoTime() - startTime) / 1000000;
+    public int getSchedulerTime() {
+        return (int) ((System.nanoTime() - startTime) / 1000000);
     }
 
     //TODO print to file
@@ -260,14 +260,17 @@ public class MultiLevelScheduler extends Scheduler{
             }
             else if(s.status == ThreadState.QueueStatus.CURRENT){
                 s.runTime += time;
-                if(s.thread.compareTo(currThread) != 0){
+                if(currThread != null && s.thread.compareTo(currThread) != 0){
+                    printThreadStats(s);
                     s.status = ThreadState.QueueStatus.LIMBO;
                 }
             }
         }
             
-        ThreadState st = getThreadState(currThread);
-        st.status = ThreadState.QueueStatus.CURRENT;
+        if(currThread != null){
+            ThreadState st = getThreadState(currThread);
+            st.status = ThreadState.QueueStatus.CURRENT;
+        }
     }
 
     /**

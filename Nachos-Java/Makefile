@@ -32,6 +32,7 @@ network = 	NetKernel NetProcess PostOffice MailMessage
 pa1 =		StaticPriorityScheduler StaticPriorityQueue \
 			DynamicPriorityScheduler DynamicPriorityQueue \
 			MultiLevelScheduler MultiLevelQueue \
+			DelayTest \
 			ThreadState \
 
 ALLDIRS = machine security ag threads userprog vm network pa1

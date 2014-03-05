@@ -410,29 +410,29 @@ public class KThread {
         
         if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
             for(int i=0; i<num; i++){
-                KThread thread = new KThread(new PingTest(i));
+                KThread thread = new KThread(new DelayTest(i, 10));
                 Machine.interrupt().disable();
                 ThreadedKernel.scheduler.setPriority(thread,7-i);
                 Machine.interrupt().enable();
-                thread.setName("forked thread").fork();
+                thread.setName("SP thread").fork();
             }
         }
         else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.DynamicPriorityScheduler")){
             for(int i=0; i<num; i++){
-                KThread thread = new KThread(new PingTest(i));
+                KThread thread = new KThread(new DelayTest(i, 20));
                 Machine.interrupt().disable();
-                ThreadedKernel.scheduler.setPriority(thread,7-i);
+                ThreadedKernel.scheduler.setPriority(thread,5*i);
                 Machine.interrupt().enable();
-                thread.setName("forked thread").fork();
+                thread.setName("DP thread").fork();
             }
         }
         else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.MultiLevelScheduler")){
             for(int i=0; i<num; i++){
-                KThread thread = new KThread(new PingTest(i));
+                KThread thread = new KThread(new DelayTest(i, 20));
                 Machine.interrupt().disable();
-                ThreadedKernel.scheduler.setPriority(thread,30-3*i);
+                ThreadedKernel.scheduler.setPriority(thread,20-10*i);
                 Machine.interrupt().enable();
-                thread.setName("forked thread").fork();
+                thread.setName("ML thread").fork();
             }
         }
         else

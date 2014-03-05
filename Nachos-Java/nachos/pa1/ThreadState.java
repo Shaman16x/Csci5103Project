@@ -70,8 +70,10 @@ public class ThreadState {
 	 * @return	the effective priority of the associated thread.
 	 */
 	public int getEffectivePriority() {
-        int ep = priority + (int)(runTime - waitTime)/(1000000);
+        if(agingTime <= 0) return getPriority();    // prevent div 0
         
+        int ep = priority + (int)(((runTime - waitTime)/(1000000))/agingTime);
+        System.out.println(thread.getName() + ":" + thread.getID() + " has priority " + ep);
         if(ep > maxPriorityValue)
             return maxPriorityValue;
         else if(ep < minPriorityValue)

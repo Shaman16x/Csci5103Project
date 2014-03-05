@@ -33,8 +33,8 @@ public class DynamicPriorityScheduler extends Scheduler{
     }
 
     // gets the age of the scheduler in ms
-    public long getSchedulerTime() {
-        return (System.nanoTime() - startTime) / 1000000;
+    public int getSchedulerTime() {
+        return (int) ((System.nanoTime() - startTime) / 1000000);
     }
 
     //TODO print to file
@@ -45,12 +45,12 @@ public class DynamicPriorityScheduler extends Scheduler{
             try{
             file = new FileWriter(outfile, true);
             writer = new PrintWriter(file);
-            writer.println(getSchedulerTime() + "," + thread.getThread().getName() +":"+thread.getThread().getID()+ "," + thread.getPriority());
+            writer.println(getSchedulerTime() + "," + thread.getThread().getName() +":"+thread.getThread().getID()+ "," + thread.getEffectivePriority());
             writer.close();
             }catch(IOException e){}
         }
         else
-            System.out.println(getSchedulerTime() + "," + thread.getThread().getName()+":"+thread.getThread().getID()+ "," + thread.getPriority());
+            System.out.println(getSchedulerTime() + "," + thread.getThread().getName()+":"+thread.getThread().getID()+ "," + thread.getEffectivePriority());
     }
 
     // prints the final stats of a thread that has executed
@@ -260,14 +260,17 @@ public class DynamicPriorityScheduler extends Scheduler{
             }
             else if(s.status == ThreadState.QueueStatus.CURRENT){
                 s.runTime += time;
-                if(s.thread.compareTo(currThread) != 0){
+                if(currThread != null && s.thread.compareTo(currThread) != 0){
+                    printThreadStats(s);
                     s.status = ThreadState.QueueStatus.LIMBO;
                 }
             }
         }
-            
-        ThreadState st = getThreadState(currThread);
-        st.status = ThreadState.QueueStatus.CURRENT;
+        
+        if(currThread != null){
+            ThreadState st = getThreadState(currThread);
+            st.status = ThreadState.QueueStatus.CURRENT;
+        }
     }
 
     /**
@@ -291,7 +294,7 @@ public class DynamicPriorityScheduler extends Scheduler{
         Lib.assertTrue(Machine.interrupt().disabled());
         boolean found = false;
         ThreadState state;
-
+        System.out.println("Setting thread with priority"+priority);
         if(priority>maxPriorityValue) priority = maxPriorityValue;
         if(priority<minPriorityValue) priority = minPriorityValue;
 
