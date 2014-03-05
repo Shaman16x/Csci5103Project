@@ -81,8 +81,15 @@ public class StaticPriorityScheduler extends Scheduler{
             maxPriorityValue = i;
             
         String filename = Config.getString("statistics.logfile");
-        if(!filename.equals(""))
-            outfile = new File(filename);
+        if(filename != null){
+            try{
+                outfile = new File(filename);
+                file = new FileWriter(outfile);
+                writer = new PrintWriter(file);
+                writer.close();
+            }catch(IOException e){}
+        }
+        
     }
     
     /**
