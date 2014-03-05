@@ -69,8 +69,38 @@ public class MultiLevelScheduler extends Scheduler{
 
     // Prints Final statistics of the scheduler
     public void printFinalStats(){
-        //TODO: write me
+        if(outfile != null){
+            try{
+            file = new FileWriter(outfile, true);
+            writer = new PrintWriter(file);
+            writer.println("System," + getSystemStats());
+            writer.close();
+            }catch(IOException e){}
+        }
+        else
+            System.out.println("System," + getSystemStats());
     }
+    
+    public String getSystemStats(){
+        int turnaroundTime = 0;
+        int totalWaitTime = 0;
+        int maxWaitTime = 0;
+        int totalThreads = 0;
+        
+        for(ThreadState s: states){
+            if(s.waitTime/1000000 > maxWaitTime){
+                maxWaitTime = (int)(s.waitTime/1000000);
+            }
+            if(s.waitTime + s.runTime > 0){
+                turnaroundTime += (int) ((s.waitTime + s.runTime)/1000000);
+                totalThreads++;
+            }
+            totalWaitTime += (int) (s.waitTime/1000000);
+        }
+        
+        return totalThreads + "," + totalWaitTime/totalThreads + "," + maxWaitTime + "," + turnaroundTime/totalThreads;
+    }
+    
     /**
      * Allocate a new scheduler.
      */
