@@ -87,6 +87,7 @@ public class StaticPriorityScheduler extends Scheduler{
         int totalThreads = 0;
         
         for(ThreadState s: states){
+            //System.out.println(s.getStats());         // Debug printout
             if(s.waitTime/1000000 > maxWaitTime){
                 maxWaitTime = (int)(s.waitTime/1000000);
             }

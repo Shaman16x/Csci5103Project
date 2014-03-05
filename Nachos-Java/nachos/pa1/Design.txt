@@ -1,18 +1,64 @@
 Design Decisions
+-----------------------------------------------------------------------
+Kyle Michaels
+Jerimiah Thomas
 
-To track priority we decide to use the ThreadState class from 
-Priority Scheduler
+
+General Overview
+-----------------------------------------------------------------------
+To the outside world all of our Schedulers operate as follows:
+* A new queue is create by Scheduler
+* setPriority is called to determine the initial priority of a thread 
+* Then, a thread is put into the queue using waitForAccess.
+* to acquire the next thread, nextThread is called
+
+If the priority of a thread was not set, it is imediately assign 
+the maxPriorityValue (lowest priority).  This is because it is the only
+deterministic priority value set by the .conf file.
+
+To track priority we decided to use a modified version of the ThreadState
+class from  Priority Scheduler.  It keeps track of the thread, its priority,
+and some other statistics such as run/wait time.
+Why?
+
+Data Structure:
+We decide to use ArrayLists to implement the queue.
+The queue is sorted by inserting ThreadStates at the correct .
 
 
 
 StaticPriorityScheduler
 ------------------------------------------------------------------------
+static operation description
+
+Wut else?
 
 
 DynamicPriorityScheduler
 ------------------------------------------------------------------------
+dp description
+
+How we age?
+
+Why don't we need to reorganize?
 
 
 MultiLevelScheduler
 ------------------------------------------------------------------------
+ml description
+
+How are multiple levels determined?
+
+
+
+Modifications to Nachos
+-------------------------------------------------------------------------
+Kthread:
+getID()
+
+selfTest mods
+
+
+Machine:
+
 

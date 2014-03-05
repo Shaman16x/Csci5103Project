@@ -102,10 +102,10 @@ public final class Machine {
     if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
         ((StaticPriorityScheduler) ThreadedKernel.scheduler).printFinalStats();
     }
-    else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
+    else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.DynamicPriorityScheduler")){
         ((DynamicPriorityScheduler) ThreadedKernel.scheduler).printFinalStats();
     }
-    else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
+    else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.MultiLevelScheduler")){
         ((MultiLevelScheduler) ThreadedKernel.scheduler).printFinalStats();
     }
 	System.out.print("Machine halting!\n\n");   
