@@ -20,10 +20,13 @@ To track priority we decided to use a modified version of the ThreadState
 class from  Priority Scheduler.  It keeps track of the thread, its priority,
 and some other statistics such as run/wait time.  We did this so that all the
 information for a thread would be held in one place that the schedule could access.
+The important information added is priority, start time, run time, and wait time.
+These statistics give us the information needed to log a thread.  They also
+are apart of determining the priority of an aging thread.
 Why?
 
 Data Structure:
-We decide to use ArrayLists to implement the queue.
+We decided to use ArrayLists to implement the queue.
 The queue is sorted by inserting ThreadStates at the correct location
 according to which Scheduler is being used.  ArrayLists are easy to manage
 insertions and deletions.
