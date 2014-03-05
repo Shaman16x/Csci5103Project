@@ -34,7 +34,7 @@ public class MultiLevelScheduler extends Scheduler{
 
     // gets the age of the scheduler in ms
     public long getSchedulerTime() {
-        return (System.nanoTime() - startTime) / 1000;
+        return (System.nanoTime() - startTime) / 1000000;
     }
 
     //TODO print to file

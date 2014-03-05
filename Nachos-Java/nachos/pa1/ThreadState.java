@@ -70,7 +70,7 @@ public class ThreadState {
 	 * @return	the effective priority of the associated thread.
 	 */
 	public int getEffectivePriority() {
-        int ep = priority + (int)(runTime - waitTime)/(10^6);
+        int ep = priority + (int)(runTime - waitTime)/(1000000);
         
         if(ep > maxPriorityValue)
             return maxPriorityValue;
