@@ -3,6 +3,7 @@
 import nachos.threads.*;
 import nachos.machine.*;
 import java.util.*;
+import java.io.*;
 
 /**
  * Coordinates a group of thread queues of the same kind.
@@ -18,6 +19,9 @@ public class MultiLevelScheduler extends Scheduler{
     protected long startTime = System.nanoTime();
     protected long prevTime = System.nanoTime();                     //stores the previous time call.
     protected static int agingTime = 10;
+    File outfile = null;
+    FileWriter file;
+    PrintWriter writer;
 
     // for debugging purposes
     public static int getMaxPriorityValue(){
@@ -36,14 +40,32 @@ public class MultiLevelScheduler extends Scheduler{
     //TODO print to file
     
     // prints stats about the scheduled thread
-    public void printScheduledThread(KThread thread){
-        ThreadState ts = getThreadState(thread);
-        System.out.println(getSchedulerTime() + "," + thread.getName()+ "," + ts.getPriority());
+    public void printScheduledThread(ThreadState thread){
+        if(outfile != null){
+            try{
+            file = new FileWriter(outfile, true);
+            writer = new PrintWriter(file);
+            writer.append(getSchedulerTime() + "," + thread.getThread().getName()+ "," + thread.getPriority());
+            writer.close();
+            }catch(IOException e){}
+        }
+        else
+            System.out.println(getSchedulerTime() + "," + thread.getThread().getName()+ "," + thread.getPriority());
+        
     }
 
     // prints the final stats of a thread that has executed
-    public void printThreadStats(KThread thread){
-        System.out.println(getThreadState(thread).getStats());
+    public void printThreadStats(ThreadState thread){
+        if(outfile != null){
+            try{
+            file = new FileWriter(outfile, true);
+            writer = new PrintWriter(file);
+            writer.append(thread.getStats());
+            writer.close();
+            }catch(IOException e){}
+        }
+        else
+            System.out.println(thread.getStats());
     }
 
     // Prints Final statistics of the scheduler
@@ -61,6 +83,10 @@ public class MultiLevelScheduler extends Scheduler{
         Integer ageTime = Config.getInteger("scheduler.agingTime");
         if(ageTime != null)
             agingTime = ageTime;
+            
+        String filename = Config.getString("statistics.logfile");
+        if(!filename.equals(""))
+            outfile = new File(filename);
     }
     
     /**

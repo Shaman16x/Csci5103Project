@@ -3,6 +3,7 @@ package nachos.pa1;
 import nachos.threads.*;
 import nachos.machine.*;
 import java.util.*;
+import java.io.*;
 
 /**
  * Static priority scheduler used for scheduling thread
@@ -19,6 +20,9 @@ public class StaticPriorityScheduler extends Scheduler{
 	protected int minPriorityValue = 0;
     protected long startTime = System.nanoTime();           // beginning of scheduler's life
     protected long prevTime = System.nanoTime();            //stores the previous time call.
+    File outfile = null;
+    FileWriter file;
+    PrintWriter writer;
     
     
     // for debugging purposes
@@ -35,12 +39,31 @@ public class StaticPriorityScheduler extends Scheduler{
     
     // prints stats about the scheduled thread
     public void printScheduledThread(ThreadState thread){
-        System.out.println(getSchedulerTime() + "," + thread.getThread().getName()+ "," + thread.getPriority());
+        if(outfile != null){
+            try{
+            file = new FileWriter(outfile, true);
+            writer = new PrintWriter(file);
+            writer.append(getSchedulerTime() + "," + thread.getThread().getName()+ "," + thread.getPriority());
+            writer.close();
+            }catch(IOException e){}
+        }
+        else
+            System.out.println(getSchedulerTime() + "," + thread.getThread().getName()+ "," + thread.getPriority());
     }
 
     // prints the final stats of a thread that has executed
     public void printThreadStats(ThreadState thread){
-        System.out.println(thread.getStats());
+        if(outfile != null){
+            try{
+            file = new FileWriter(outfile, true);
+            writer = new PrintWriter(file);
+            writer.append(getSchedulerTime() + "," + thread.getThread().getName()+ "," + thread.getPriority());
+            writer.close();
+            }catch(IOException e){}
+        }
+        else
+            System.out.println(thread.getStats());
+        
     }
 
     // Prints Final statistics of the scheduler
@@ -56,6 +79,10 @@ public class StaticPriorityScheduler extends Scheduler{
         Integer i = Config.getInteger("scheduler.maxPriorityValue");
         if(i != null)
             maxPriorityValue = i;
+            
+        String filename = Config.getString("statistics.logfile");
+        if(!filename.equals(""))
+            outfile = new File(filename);
     }
     
     /**
@@ -219,7 +246,7 @@ public class StaticPriorityScheduler extends Scheduler{
      * updates wait and running times
      * determines if a thread has finished
      */
-    public void updateThreads(KThread currThread){
+    public void updateThreads(KThread currThread) {
         long time = System.nanoTime() - prevTime;
         prevTime = System.nanoTime();
         
