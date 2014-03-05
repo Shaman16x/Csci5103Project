@@ -18,7 +18,8 @@ deterministic priority value set by the .conf file.
 
 To track priority we decided to use a modified version of the ThreadState
 class from  Priority Scheduler.  It keeps track of the thread, its priority,
-and some other statistics such as run/wait time.
+and some other statistics such as run/wait time.  We did this so that all the
+information for a thread would be held in one place that the schedule could access.
 Why?
 
 Data Structure:
