@@ -34,8 +34,7 @@ public class ThreadState {
      */
     public ThreadState(KThread thread) {
         this.thread = thread;
-        
-        setPriority(7);     //TODO: use better default
+        setPriority(maxPriorityValue);     //TODO: use better default
     }
 
     public ThreadState(KThread thread, int priority, int maxP, int a){

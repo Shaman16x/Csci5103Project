@@ -23,7 +23,7 @@ public class MultiLevelScheduler extends Scheduler{
     FileWriter file;
     PrintWriter writer;
 
-    // for debugging purposes
+    // returns the max priority value
     public static int getMaxPriorityValue(){
         return maxPriorityValue;
     }
@@ -36,8 +36,6 @@ public class MultiLevelScheduler extends Scheduler{
     public int getSchedulerTime() {
         return (int) ((System.nanoTime() - startTime) / 1000000);
     }
-
-    //TODO print to file
     
     // prints stats about the scheduled thread
     public void printScheduledThread(ThreadState thread){
@@ -45,12 +43,12 @@ public class MultiLevelScheduler extends Scheduler{
             try{
             file = new FileWriter(outfile, true);
             writer = new PrintWriter(file);
-            writer.println(getSchedulerTime() + "," + thread.getThread().getName() +":"+thread.getThread().getID()+ "," + thread.getPriority());
+            writer.println(getSchedulerTime() + "," + thread.getThread().getName() +":"+thread.getThread().getID()+ "," + thread.getEffectivePriority());
             writer.close();
             }catch(IOException e){}
         }
         else
-            System.out.println(getSchedulerTime() + "," + thread.getThread().getName()+":"+thread.getThread().getID()+ "," + thread.getPriority());
+            System.out.println(getSchedulerTime() + "," + thread.getThread().getName()+":"+thread.getThread().getID()+ "," + thread.getEffectivePriority());
     }
 
     // prints the final stats of a thread that has executed
@@ -81,6 +79,8 @@ public class MultiLevelScheduler extends Scheduler{
             System.out.println("System," + getSystemStats());
     }
     
+    
+    // Prints the system statistics
     public String getSystemStats(){
         int turnaroundTime = 0;
         int totalWaitTime = 0;
@@ -181,6 +181,7 @@ public class MultiLevelScheduler extends Scheduler{
         return s.getPriority();
     }
 
+    // gets a thread state based off of the specified thread
     public ThreadState getThreadState(KThread thread){
         ThreadState state;
 

@@ -116,6 +116,7 @@ public class MultiLevelQueue extends ThreadQueue{
         
         if(thread != null){
             parentScheduler.printScheduledThread(thread);
+            thread.status = ThreadState.QueueStatus.CURRENT;
             return thread.getThread();
         }
         return null;
@@ -138,13 +139,13 @@ public class MultiLevelQueue extends ThreadQueue{
     public void acquire(KThread thread) {
         for(int i=0; i<queue0.size(); i++)
             if(thread.compareTo(queue0.get(i).getThread()) == 0)
-                queue0.remove(i);
+                {queue0.remove(i); return;}
         for(int i=0; i<queue1.size(); i++)
             if(thread.compareTo(queue1.get(i).getThread()) == 0)
-                queue1.remove(i);
+                {queue1.remove(i); return;}
         for(int i=0; i<queue2.size(); i++)
             if(thread.compareTo(queue2.get(i).getThread()) == 0)
-                queue2.remove(i);
+                {queue2.remove(i); return;}
     }
 
     /**
