@@ -407,14 +407,36 @@ public class KThread {
     if(Config.getBoolean("runTests")){
         //new KThread(new SchedTest1(0)).setName("Schedule Test 1").fork();
         int num= Integer.parseInt(Config.getString("Kernel.numThreads"));
-        int p = 1;
-        for(int i=0; i<num; i++,p+=5){
-            KThread thread = new KThread(new PingTest(i));
-            Machine.interrupt().disable();
-            ThreadedKernel.scheduler.setPriority(thread,7-i);
-            Machine.interrupt().enable();
-            thread.setName("forked thread").fork();
+        
+        if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
+            for(int i=0; i<num; i++){
+                KThread thread = new KThread(new PingTest(i));
+                Machine.interrupt().disable();
+                ThreadedKernel.scheduler.setPriority(thread,7-i);
+                Machine.interrupt().enable();
+                thread.setName("forked thread").fork();
+            }
         }
+        else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.DynamicPriorityScheduler")){
+            for(int i=0; i<num; i++){
+                KThread thread = new KThread(new PingTest(i));
+                Machine.interrupt().disable();
+                ThreadedKernel.scheduler.setPriority(thread,7-i);
+                Machine.interrupt().enable();
+                thread.setName("forked thread").fork();
+            }
+        }
+        else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.MultiLevelScheduler")){
+            for(int i=0; i<num; i++){
+                KThread thread = new KThread(new PingTest(i));
+                Machine.interrupt().disable();
+                ThreadedKernel.scheduler.setPriority(thread,30-3*i);
+                Machine.interrupt().enable();
+                thread.setName("forked thread").fork();
+            }
+        }
+        else
+            System.out.println("you didn't run one of our schedulers");
     }
     else {
         int num= Integer.parseInt(Config.getString("Kernel.numThreads"));
