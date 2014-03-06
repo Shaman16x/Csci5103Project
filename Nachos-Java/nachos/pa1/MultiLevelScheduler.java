@@ -20,8 +20,8 @@ public class MultiLevelScheduler extends Scheduler{
     protected long prevTime = System.nanoTime();    // stores the previous time call.
     protected static int agingTime = 10;            // aging time quantum
     File outfile = null;                            // logfile
-    FileWriter file;
-    PrintWriter writer;
+    FileWriter file;                                // object to write to log file
+    PrintWriter writer;                             // object to write to log file
 
     // returns the max priority value
     public static int getMaxPriorityValue(){
