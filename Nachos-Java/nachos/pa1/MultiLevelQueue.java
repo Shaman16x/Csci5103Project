@@ -170,6 +170,8 @@ public class MultiLevelQueue extends ThreadQueue{
     // moves up threads to the next priority
     protected void updateQueues(){
         ThreadState ts;
+        // make sure priorities are correct
+        parentScheduler.updatePriorities(null);
         for(int i = 0; i < queue1.size(); i++){
             // move to higher priority level
             if(queue1.get(i).getEffectivePriority() < 11){

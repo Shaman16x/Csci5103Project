@@ -43,18 +43,24 @@ public class MultiLevelScheduler extends Scheduler{
             try{
             file = new FileWriter(outfile, true);
             writer = new PrintWriter(file);
-            String db = "";
-            if(Config.getString("printDebug") != null)      // debug output
+            String db = "";     // debug output strings
+            String ql = "";
+            if(Config.getString("printDebug") != null){
                 db = thread.getThread().getName() + ":";
-            writer.println(getSchedulerTime() + "," + db + thread.getThread().getID()+ "," + thread.getEffectivePriority());
+                ql = ", Queue Level:" + thread.queueLevel;
+            }
+            writer.println(getSchedulerTime() + "," + db + thread.getThread().getID()+ "," + thread.getEffectivePriority() + ql);
             writer.close();
             }catch(IOException e){}
         }
         else {
-            String db = "";
-            if(Config.getString("printDebug") != null)      // debug output
+            String db = "";     // debug output strings
+            String ql = "";
+            if(Config.getString("printDebug") != null){
                 db = thread.getThread().getName() + ":";
-            System.out.println(getSchedulerTime() + ","+ db + thread.getThread().getID()+ "," + thread.getEffectivePriority());
+                ql = ", Queue Level:" + thread.queueLevel;
+            }
+            writer.println(getSchedulerTime() + "," + db + thread.getThread().getID()+ "," + thread.getEffectivePriority() + ql);
         }
     }
 
@@ -116,6 +122,7 @@ public class MultiLevelScheduler extends Scheduler{
     
     /**
      * Allocate a new scheduler.
+     * Sets the maxPriorityValue, againTime, and logging file name
      */
     public MultiLevelScheduler() {
         Integer i = Config.getInteger("scheduler.maxPriorityValue");
@@ -127,6 +134,7 @@ public class MultiLevelScheduler extends Scheduler{
             agingTime = ageTime;
             
         String filename = Config.getString("statistics.logFile");
+        // Try to see if the file exists
         if(filename != null){
             try{
                 outfile = new File(filename);
@@ -198,6 +206,7 @@ public class MultiLevelScheduler extends Scheduler{
     public ThreadState getThreadState(KThread thread){
         ThreadState state;
 
+        // look throug the list of threads for the matching one
         for(ThreadState s : states){
             if(s.getThread().compareTo(thread) == 0){
                 return s;
@@ -244,13 +253,9 @@ public class MultiLevelScheduler extends Scheduler{
     public int getEffectivePriority(KThread thread) {
         int ep=maxPriorityValue;
         boolean found = false;
-        for(ThreadState s:states)
-            if(s.getThread().compareTo(thread)==0){
-                ep = s.getEffectivePriority();
-                found = true;
-            }
-        if(!found)
-            states.add(new ThreadState(thread, maxPriorityValue, maxPriorityValue, agingTime));
+        ThreadState ts = getThreadState(thread);
+        ep = ts.getEffectivePriority();
+        
         if(ep>maxPriorityValue)
             return maxPriorityValue;
         else if(ep<minPriorityValue)
