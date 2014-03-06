@@ -12,24 +12,25 @@ To the outside world all of our Schedulers operate as follows:
 * Then, a thread is put into the queue using waitForAccess.
 * to acquire the next thread, nextThread is called
 
-If the priority of a thread was not set, it is imediately assign 
+If the priority of a thread was not set, it is imediately assigned
 the maxPriorityValue (lowest priority).  This is because it is the only
 deterministic priority value set by the .conf file.
 
 To track priority we decided to use a modified version of the ThreadState
-class from  Priority Scheduler.  It keeps track of the thread, its priority,
+class from Priority Scheduler.  It keeps track of the thread, its priority,
 and some other statistics such as run/wait time.  We did this so that all the
-information for a thread would be held in one place that the schedule could access.
+information for a thread would be held in one place that the Scheduler could access.
 The important information added is priority, start time, run time, and wait time.
-These statistics give us the information needed to log a thread.  They also
-are apart of determining the priority of an aging thread.
-Why?
+These statistics give us the information needed to log a thread as well calculate
+the Effective Priority of an aging thread.
 
 Data Structure:
-We decided to use ArrayLists to implement the queue.
-The queue is sorted by inserting ThreadStates at the correct location
-according to which Scheduler is being used.  ArrayLists are easy to manage
-insertions and deletions.
+We decided to use ArrayLists to implement the queue.  The Scheduler classes use
+an ArrayList to store thread states for all threads created in that Scheduler.
+The Queue classes use ArrayLists to store thread states to implement the proper queues.
+Each queue (Queue ArrayList) is sorted by inserting ThreadStates at the correct location
+according to which Scheduler is being used (RoundRobin vs Priority order). The reason
+for ArrayLists is that there are simple to implement insertions and deletions and scanning.
 
 
 
