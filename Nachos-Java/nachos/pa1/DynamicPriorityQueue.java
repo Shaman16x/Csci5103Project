@@ -2,46 +2,22 @@ package nachos.pa1;
 
 import nachos.threads.*;
 import java.util.*;
-/**
- * Schedules access to some sort of resource with limited access constraints. A
- * thread queue can be used to share this limited access among multiple
- * threads.
- *
- * <p>
- * Examples of limited access in Nachos include:
- *
- * <ol>
- * <li>the right for a thread to use the processor. Only one thread may run on
- * the processor at a time.
- *
- * <li>the right for a thread to acquire a specific lock. A lock may be held by
- * only one thread at a time.
- *
- * <li>the right for a thread to return from <tt>Semaphore.P()</tt> when the
- * semaphore is 0. When another thread calls <tt>Semaphore.V()</tt>, only one
- * thread waiting in <tt>Semaphore.P()</tt> can be awakened.
- *
- * <li>the right for a thread to be woken while sleeping on a condition
- * variable. When another thread calls <tt>Condition.wake()</tt>, only one
- * thread sleeping on the condition variable can be awakened.
- *
- * <li>the right for a thread to return from <tt>KThread.join()</tt>. Threads
- * are not allowed to return from <tt>join()</tt> until the target thread has
- * finished.
- * </ol>
- *
- * All these cases involve limited access because, for each of them, it is not
- * necessarily possible (or correct) for all the threads to have simultaneous
- * access. Some of these cases involve concrete resources (e.g. the processor,
- * or a lock); others are more abstract (e.g. waiting on semaphores, condition
- * variables, or join).
- *
- * <p>
- * All thread queue methods must be invoked with <b>interrupts disabled</b>.
+
+/*
+ * This is the Queue class for the DynamicPriorityScheduler.\
+ * It implements a queue that sorts on effective priority of
+ * threads added.  This queue implements aging using effective
+ * priority. The effective priority is defined as follows:
+ * effective priority value = priority value
+ *                          + (run time - wait time)/(aging time * 1000000)
+ * The effective priorities change as the run and wait time change.
+ * The next thread to be scheduled is always the first item
+ * in the queue.
  */
+
 public class DynamicPriorityQueue extends ThreadQueue{
 
-    protected ArrayList<ThreadState> queue = new ArrayList<ThreadState>();
+    protected ArrayList<ThreadState> queue = new ArrayList<ThreadState>();      // queue for waiting threads
     protected DynamicPriorityScheduler parentScheduler;
 
     /**
