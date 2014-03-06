@@ -2,48 +2,26 @@ package nachos.pa1;
 
 import nachos.threads.*;
 import java.util.ArrayList;
-/**
- * Schedules access to some sort of resource with limited access constraints. A
- * thread queue can be used to share this limited access among multiple
- * threads.
- *
- * <p>
- * Examples of limited access in Nachos include:
- *
- * <ol>
- * <li>the right for a thread to use the processor. Only one thread may run on
- * the processor at a time.
- *
- * <li>the right for a thread to acquire a specific lock. A lock may be held by
- * only one thread at a time.
- *
- * <li>the right for a thread to return from <tt>Semaphore.P()</tt> when the
- * semaphore is 0. When another thread calls <tt>Semaphore.V()</tt>, only one
- * thread waiting in <tt>Semaphore.P()</tt> can be awakened.
- *
- * <li>the right for a thread to be woken while sleeping on a condition
- * variable. When another thread calls <tt>Condition.wake()</tt>, only one
- * thread sleeping on the condition variable can be awakened.
- *
- * <li>the right for a thread to return from <tt>KThread.join()</tt>. Threads
- * are not allowed to return from <tt>join()</tt> until the target thread has
- * finished.
- * </ol>
- *
- * All these cases involve limited access because, for each of them, it is not
- * necessarily possible (or correct) for all the threads to have simultaneous
- * access. Some of these cases involve concrete resources (e.g. the processor,
- * or a lock); others are more abstract (e.g. waiting on semaphores, condition
- * variables, or join).
- *
- * <p>
- * All thread queue methods must be invoked with <b>interrupts disabled</b>.
+
+/* This is the Queue class for the MultiLevelScheduler.
+ * It maintains three queues of different orders of priority.
+ * These Queues store the ThreadState of a thread.
+ * Each queue is ordered in a round robin fashion so that
+ * the effective priority of a thread only matters when
+ * choosing which queue to place it in.
+ * The first queue (queue0) is the highest priority.
+ * The middle queue (queue1) is the next level of priority.
+ * And the last queue (queue2) is the lowest level of priority.
+ * The next thread to be scheduled comes from queue0 unless it
+ * is empty in which case from queue1 unless it is empty in which
+ * case from queue2.
  */
+
 public class MultiLevelQueue extends ThreadQueue{
 	
-	protected ArrayList<ThreadState> queue0 = new ArrayList<ThreadState>();
-    protected ArrayList<ThreadState> queue1 = new ArrayList<ThreadState>();
-    protected ArrayList<ThreadState> queue2 = new ArrayList<ThreadState>();
+	protected ArrayList<ThreadState> queue0 = new ArrayList<ThreadState>();     // highest priority queue
+    protected ArrayList<ThreadState> queue1 = new ArrayList<ThreadState>();     // middle priority queue
+    protected ArrayList<ThreadState> queue2 = new ArrayList<ThreadState>();     // lowest priority queue
     protected MultiLevelScheduler parentScheduler;
 	
 
@@ -95,10 +73,9 @@ public class MultiLevelQueue extends ThreadQueue{
      * and return the next thread to receive access, or <tt>null</tt> if there
      * are no threads waiting.
      *
-     * <p>
-     * If the limited access object transfers priority, and if there are other
-     * threads waiting for access, then they will donate priority to the
-     * returned thread.
+     * The next thread to be scheduled comes from queue0 unless it
+     * is empty in which case from queue1 unless it is empty in which
+     * case from queue2.
      *
      * @return	the next thread to receive access, or <tt>null</tt> if there
      *		are no threads waiting.
@@ -167,7 +144,9 @@ public class MultiLevelQueue extends ThreadQueue{
             System.out.println(s.getThread());
     }
     
-    // moves up threads to the next priority
+    // moves up threads to the next priority queue
+    // based on effective priority values.
+    // only moves from lower to higher priority.
     protected void updateQueues(){
         ThreadState ts;
         // make sure priorities are correct

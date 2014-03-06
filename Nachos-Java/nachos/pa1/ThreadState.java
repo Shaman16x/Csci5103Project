@@ -4,7 +4,8 @@ import nachos.threads.KThread;
 
 /*
  * ThreadState is a container used to hold a thread, an associated
- * priority, and status of thread in the queue
+ * priority, status of thread in the queue, run time, wait time
+ * and the start time of the associated thread.
  * Other local variables are used for quick calculation of various
  * statistics including effective priority
  */
