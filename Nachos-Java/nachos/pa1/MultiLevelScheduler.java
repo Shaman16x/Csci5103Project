@@ -63,7 +63,7 @@ public class MultiLevelScheduler extends Scheduler{
                 db = thread.getThread().getName() + ":";
                 ql = ", Queue Level:" + thread.queueLevel;
             }
-            writer.println(getSchedulerTime() + "," + db + thread.getThread().getID()+ "," + thread.getEffectivePriority() + ql);
+            System.out.println(getSchedulerTime() + "," + db + thread.getThread().getID()+ "," + thread.getEffectivePriority() + ql);
         }
     }
 

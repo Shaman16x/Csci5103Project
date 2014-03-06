@@ -133,6 +133,8 @@ public class StaticPriorityScheduler extends Scheduler{
                 writer.close();
             }catch(IOException e){}
         }
+        else{
+        }
     }
     
     /**
