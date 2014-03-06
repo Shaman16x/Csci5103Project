@@ -47,7 +47,7 @@ public class DynamicPriorityScheduler extends Scheduler{
             String db = "";
             if(Config.getString("printDebug") != null)      // debug output
                 db = thread.getThread().getName() + ":";
-            writer.println(getSchedulerTime() + "," + db + thread.getThread().getID()+ "," + thread.getPriority());
+            writer.println(getSchedulerTime() + "," + db + thread.getThread().getID()+ "," + thread.getEffectivePriority());
             writer.close();
             }catch(IOException e){}
         }
@@ -55,7 +55,7 @@ public class DynamicPriorityScheduler extends Scheduler{
             String db = "";
             if(Config.getString("printDebug") != null)      // debug output
                 db = thread.getThread().getName() + ":";
-            System.out.println(getSchedulerTime() + "," + db + thread.getThread().getID()+ "," + thread.getPriority());
+            System.out.println(getSchedulerTime() + "," + db + thread.getThread().getID()+ "," + thread.getEffectivePriority());
         }
     }
 
