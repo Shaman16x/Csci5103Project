@@ -16,47 +16,107 @@ If the priority of a thread was not set, it is imediately assigned
 the maxPriorityValue (lowest priority).  This is because it is the only
 deterministic priority value set by the .conf file.
 
+All logged information is written to the log file specified in the .conf
+file. If no file is specified then the information is written to the
+terminal. Everytime a thread is scheduled the time it was scheduled, its
+ID, and its priority are logged.  Also, everytime a thread finishes its
+ID, start time, total run time, total wait time, and end time are logged.
+Lastly when all threads finish and the Scheduler halts, the "System" logs
+the number of threads, average wait time, average turnaround time, and
+maximum wait time.  This is all true for all Schedulers.
+
 To track priority we decided to use a modified version of the ThreadState
 class from Priority Scheduler.  It keeps track of the thread, its priority,
-and some other statistics such as run/wait time.  We did this so that all the
-information for a thread would be held in one place that the Scheduler could access.
-The important information added is priority, start time, run time, and wait time.
-These statistics give us the information needed to log a thread as well calculate
-the Effective Priority of an aging thread.
+and some other statistics such as run/wait time.  We did this so that all
+the information for a thread would be held in one place that the Scheduler
+could access.  The important information added is priority, start time, run
+time, and wait time.  These statistics give us the information needed to
+log a thread as well calculate the Effective Priority of an aging thread.
 
 Data Structure:
-We decided to use ArrayLists to implement the queue.  The Scheduler classes use
-an ArrayList to store thread states for all threads created in that Scheduler.
-The Queue classes use ArrayLists to store thread states to implement the proper queues.
-Each queue (Queue ArrayList) is sorted by inserting ThreadStates at the correct location
-according to which Scheduler is being used (RoundRobin vs Priority order). The reason
-for ArrayLists is that there are simple to implement insertions, deletions, and scanning.
-
+We decided to use ArrayLists to implement the queue.  The Scheduler classes
+use an ArrayList to store thread states for all threads created in that
+Scheduler.  The Queue classes use ArrayLists to store thread states to
+implement the proper queues.  Each queue (Queue ArrayList) is sorted by
+inserting ThreadStates at the correct location according to which Scheduler
+is being used (RoundRobin vs Priority order). The reason for ArrayLists
+is that there are simple to implement insertions, deletions, and scanning.
 
 
 StaticPriorityScheduler
 ------------------------------------------------------------------------
-static operation description
-
-Wut else?
+This Scheduler sorts on priority.  The lowest priority value (highest
+priority) thread in the queue is always the next thread to be scheduled.
+When a thread is added to the queue it is added before threads of lower
+priority and after all threads with higher or equivalent priority.  Once
+created, a thread always maintains the same priority value.
 
 
 DynamicPriorityScheduler
 ------------------------------------------------------------------------
-dp description
+This Scheduler sorts on effective priority.  The lowest priority value
+(highest priority) thread in the queue is always the next thread to be
+scheduled. When a thread is added to the queue it is added before threads
+of lower priority and after all threads with higher or equivalent priority.
+In addition to this sorting, thread priorities age.  Aging is managed
+everytime a thread is added to the queue, a new thread is scheduled, and
+a thread finishes.  The effective priority is:
+effective priority value = priority value
+						 + (run time - wait time)/(aging time * 1000000)
 
 How we age?
+A thread ages by keeping track of total time running and total time waiting.
+When a thread waits for access, the time since it was scheduled is added to
+its run time and is added to wait time of all other threads in the queue.
+When a new thread is scheduled this time is also accounted for in the same
+manner.  When a thread finishes wait for access is not called so in
+KThread.finish() we update the run times and wait times of the threads as
+well.  The time is of "long" type and is retrieved using System.nanoTime()
+relative to the start time of the Scheduler and the previous time an event
+happened.  The aging time is retrieved for the .conf file and if not
+specified is by default set to 10.  The times are all in ns so we divide
+by 1000000 to convert to ms and then divide by the aging time which makes
+the times relative to the priority value.
 
 Why don't we need to reorganize?
-
+Because the effective priorities are calculated at each event and before
+the any thread is added into the queue we don't need to resort the queue.
+All threads in the queue will only change wait times so they will all be
+in correct order then the thread to be added with its updated run time.
+This way it always added in the correct place and the queue does not have
+to be resorted.
 
 MultiLevelScheduler
 ------------------------------------------------------------------------
-ml description
+This Scheduler uses three queues from highest to lowest effective priority.
+Each queue is sorted in RoundRobin order (first in first out).  Any thread
+effective priority values less than or equal to ten is stored in the first
+(highest priority) queue. Threads with priority values greater than ten and
+less than or equal to twenty are stored in the second queue (middle priority).
+All other threads are stored in the last queue (lowest priority).
+
+The Scheduled thread is the next thread in the highest priority queue that
+has threads in it.  In detail, if the first queue has threads waiting then
+the first one in that queue is scheduled.  If it does not have any threads
+then the scheduled thread is the first thread in the next non-empty queue
+starting with the middle queue and then to the last queue.
+
+This Scheduler also implements aging.  This is done the same way as the
+Dynamic Priority Scheduler.  When an effective priority changes past the
+threshold to the next queue then the queues must be resorted.  For example
+if a thread waits long enough its effective priority value may decrease enough
+to move that thread to the queue of next highest level of priority.  This is
+done whenever a call to wait for access of next thread happens.  We never have
+to move a thread from a higher priority queue to a lower priority queue because
+the run time, which is what decreases the effective priority value, is
+accounted for in wait for access.  This way the queues are resorted and then
+the thread is added to the end of the proper queue.
 
 How are multiple levels determined?
-
-
+Again stated, the levels are determined as follows:
+first queue (highest priority) : effective priority <= 10
+middle queue (middle priority) : 10 < effective priority <= 20
+last queue (lowest priority) : effective priority > 20
 
 Modifications to Nachos
 -------------------------------------------------------------------------
