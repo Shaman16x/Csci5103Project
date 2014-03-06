@@ -74,3 +74,21 @@ The log files are located in the Nachos-Java directory and named:
 	Multi-Level: "MLLogFile.txt", "MLTestFile.txt"
 
 
+Logging Issues
+----------------------------------------------------------------------------------
+Due to the way main and ping thread are schedule, there are a few strange results that occur in the satistics when they finish.
+
+Both thread types will be unscheduled for brief periods of time.  They are neither
+running nor are they waiting.
+This causes the end time for these threads to be less than the current time.
+This is because the end time is calculated as the start time plus the wait and run
+time.
+
+
+
+
+
+
+
+
+
