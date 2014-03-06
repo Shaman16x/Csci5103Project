@@ -14,14 +14,14 @@ public class DynamicPriorityScheduler extends Scheduler{
 
 	protected static ArrayList<ThreadState> states = new ArrayList<ThreadState>();
 
-	protected static int maxPriorityValue = 10;
-	protected static int minPriorityValue = 0;
-    protected long startTime = System.nanoTime();
-    protected long prevTime = System.nanoTime();                     //stores the previous time call.
+	protected static int maxPriorityValue = 10;         // max priority value for the queue
+	protected static int minPriorityValue = 0;          // min priority value for the queue
+    protected long startTime = System.nanoTime();       // time Scheduler was created
+    protected long prevTime = System.nanoTime();        // stores the previous time call.
     protected static int agingTime = 10;
-    File outfile = null;
-    FileWriter file;
-    PrintWriter writer;
+    File outfile = null;                                // logfile
+    FileWriter file;                                    // object to write to log file
+    PrintWriter writer;                                 // object to write to log file
 
     // for debugging purposes
     public static int getMaxPriorityValue(){
@@ -333,29 +333,4 @@ public class DynamicPriorityScheduler extends Scheduler{
     public void setPriority(int priority) {
         setPriority(KThread.currentThread(), priority);
     }
-
-    /**
-     * If possible, raise the priority of the current thread in some
-     * scheduler-dependent way.
-     *
-     * @return	<tt>true</tt> if the scheduler was able to increase the current
-     *		thread's
-     *		priority.
-     */
-    public boolean increasePriority() {
-        return false;
-    }
-
-    /**
-     * If possible, lower the priority of the current thread user in some
-     * scheduler-dependent way, preferably by the same amount as would a call
-     * to <tt>increasePriority()</tt>.
-     *
-     * @return	<tt>true</tt> if the scheduler was able to decrease the current
-     *		thread's priority.
-     */
-    public boolean decreasePriority() {
-	return false;
-    }
-    
 }
