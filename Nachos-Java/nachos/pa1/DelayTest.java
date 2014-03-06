@@ -3,6 +3,7 @@ package nachos.pa1;
 import nachos.threads.*;
 
 // waits for x number of miliseconds
+// then finishes execution
 public class DelayTest implements Runnable {
 	public DelayTest(int num, int time) {
 	    this.time = time;
@@ -16,8 +17,8 @@ public class DelayTest implements Runnable {
             if(i%5 == 0)   {
                 System.out.println("*** thread " + num + " waited "
                        + i + " ms");
-                KThread.currentThread().yield();
             }
+            KThread.currentThread().yield();
 	    }
 	}
 

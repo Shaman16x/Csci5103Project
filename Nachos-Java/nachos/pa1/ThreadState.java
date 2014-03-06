@@ -16,6 +16,7 @@ public class ThreadState {
     protected long runTime = 0;
     protected long waitTime = 0;
     protected long startTime = 0;       // when the thread was first scheduled (in ms)
+    public int queueLevel = 0;
     protected QueueStatus status = QueueStatus.NOT_SCHEDULED;
 	/** The thread with which this object is associated. */	   
 	protected KThread thread;
@@ -72,7 +73,6 @@ public class ThreadState {
         if(agingTime <= 0) return getPriority();    // prevent div 0
         
         int ep = priority + (int)(((runTime - waitTime)/(1000000))/agingTime);
-        System.out.println(thread.getName() + ":" + thread.getID() + " has priority " + ep);
         if(ep > maxPriorityValue)
             return maxPriorityValue;
         else if(ep < minPriorityValue)
@@ -103,7 +103,7 @@ public class ThreadState {
     public String getStats(){
         long run = runTime/1000000;
         long wait = waitTime/1000000;
-        long end = startTime + run + wait;
-        return thread.getName()+":"+thread.getID() + "," + startTime + "," + run + "," + wait + "," + end;     //TODO: use getID
+        long end = startTime + (runTime + waitTime)/1000000;
+        return thread.getID() + "," + startTime + "," + run + "," + wait + "," + end;
     }
 }

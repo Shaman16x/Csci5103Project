@@ -99,6 +99,7 @@ public final class Machine {
      * Print stats, and terminate Nachos.
      */
     public static void halt() {
+    // if running a pa1 scheduler, print out final system statistics
     if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
         ((StaticPriorityScheduler) ThreadedKernel.scheduler).printFinalStats();
     }

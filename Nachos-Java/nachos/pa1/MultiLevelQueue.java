@@ -104,17 +104,24 @@ public class MultiLevelQueue extends ThreadQueue{
      *		are no threads waiting.
      */
     public KThread nextThread() {
-        parentScheduler.updatePriorities(KThread.currentThread());
+        
         updateQueues();
         ThreadState thread = null;
-        if(!queue0.isEmpty())
+        if(!queue0.isEmpty()){
             thread = queue0.remove(0);
-        else if(!queue1.isEmpty())
+            thread.queueLevel = 0;
+        }
+        else if(!queue1.isEmpty()){
             thread = queue1.remove(0);
-        else if(!queue2.isEmpty())
+            thread.queueLevel = 1;
+        }
+        else if(!queue2.isEmpty()){
             thread = queue2.remove(0);
+            thread.queueLevel = 2;
+        }
         
         if(thread != null){
+            parentScheduler.updatePriorities(thread.getThread());
             parentScheduler.printScheduledThread(thread);
             thread.status = ThreadState.QueueStatus.CURRENT;
             return thread.getThread();
@@ -160,36 +167,19 @@ public class MultiLevelQueue extends ThreadQueue{
             System.out.println(s.getThread());
     }
     
+    // moves up threads to the next priority
     protected void updateQueues(){
         ThreadState ts;
-        for(int i = 0; i < queue0.size(); i++){
-            // move to middle priority level
-            if(queue0.get(i).getEffectivePriority() > 10){
-                queue1.add(queue0.remove(i));
-                i--;    // to maintain position in queue
-            }
-            // move to lowest priority level
-            else if(queue0.get(i).getEffectivePriority() > 20){
-                queue2.add(queue0.remove(i));
-                i--;    // to maintain position in queue
-            }
-        }
         for(int i = 0; i < queue1.size(); i++){
             // move to higher priority level
             if(queue1.get(i).getEffectivePriority() < 11){
                 queue0.add(queue1.remove(i));
                 i--;    // to maintain position in queue
             }
-            // move to lower priority level
-            else if(queue1.get(i).getEffectivePriority() > 20){
-                queue2.add(queue1.remove(i));
-                i--;    // to maintain position in queue
-            }
         }
         for(int i = 0; i < queue2.size(); i++){
             // move to highest priority level
             if(queue2.get(i).getEffectivePriority() < 11){
-                //ts = queue2.remove(i);
                 queue0.add(queue2.remove(i));
                 i--;    // to maintain position in queue
             }
@@ -199,35 +189,5 @@ public class MultiLevelQueue extends ThreadQueue{
                 i--;    // to maintain position in queue
             }
         }
-        /*
-        for(ThreadState s:queue2)
-            if(s.getEffectivePriority()<=20){
-                for(int i=0; i<queue2.size(); i++)
-                    if(queue2.get(i).thread.compareTo(s.thread)==0){
-                        System.out.println("Ru-ro!");
-                        s = queue2.remove(i);
-                        System.out.println("bluh-blo!");
-                        break;
-                    }
-                if(s != null){
-                    if(s.getEffectivePriority()>10)
-                        queue1.add(s);
-                    else
-                        queue0.add(s);
-                }
-            }
-        
-        for(ThreadState s:queue1)
-            if(s.getEffectivePriority()<=10){
-                for(int i=0; i<queue1.size(); i++)
-                    if(queue1.get(i).thread.compareTo(s.thread)==0){
-                        s = queue1.remove(i);
-                        break;
-                    }
-                if(s != null)
-                    queue0.add(s);
-            }
-            */
-        
     }
 }

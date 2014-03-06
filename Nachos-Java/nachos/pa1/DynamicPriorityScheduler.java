@@ -37,24 +37,23 @@ public class DynamicPriorityScheduler extends Scheduler{
         return (int) ((System.nanoTime() - startTime) / 1000000);
     }
 
-    //TODO print to file
-    
     // prints stats about the scheduled thread
     public void printScheduledThread(ThreadState thread){
         if(outfile != null){
             try{
             file = new FileWriter(outfile, true);
             writer = new PrintWriter(file);
-            writer.println(getSchedulerTime() + "," + thread.getThread().getName() +":"+thread.getThread().getID()+ "," + thread.getEffectivePriority());
+            writer.println(getSchedulerTime() + ","+thread.getThread().getID()+ "," + thread.getEffectivePriority());
             writer.close();
             }catch(IOException e){}
         }
         else
-            System.out.println(getSchedulerTime() + "," + thread.getThread().getName()+":"+thread.getThread().getID()+ "," + thread.getEffectivePriority());
+            System.out.println(getSchedulerTime() + ","+thread.getThread().getID()+ "," + thread.getEffectivePriority());
     }
 
     // prints the final stats of a thread that has executed
     public void printThreadStats(ThreadState thread){
+        updatePriorities(null);
         if(outfile != null){
             try{
             file = new FileWriter(outfile, true);
@@ -65,6 +64,11 @@ public class DynamicPriorityScheduler extends Scheduler{
         }
         else
             System.out.println(thread.getStats());
+    }
+    
+    // overloading of method above
+    public void printThreadStats(KThread thread){
+        printThreadStats(getThreadState(thread));
     }
 
     // Prints Final statistics of the scheduler
@@ -261,7 +265,6 @@ public class DynamicPriorityScheduler extends Scheduler{
             else if(s.status == ThreadState.QueueStatus.CURRENT){
                 s.runTime += time;
                 if(currThread != null && s.thread.compareTo(currThread) != 0){
-                    printThreadStats(s);
                     s.status = ThreadState.QueueStatus.LIMBO;
                 }
             }

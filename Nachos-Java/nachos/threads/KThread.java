@@ -183,19 +183,30 @@ public class KThread {
      * delete this thread.
      */
     public static void finish() {
-	Lib.debug(dbgThread, "Finishing thread: " + currentThread.toString());
-	
-	Machine.interrupt().disable();
+        Lib.debug(dbgThread, "Finishing thread: " + currentThread.toString());
 
-	Machine.autoGrader().finishingCurrentThread();
+        Machine.interrupt().disable();
 
-	Lib.assertTrue(toBeDestroyed == null);
-	toBeDestroyed = currentThread;
+        Machine.autoGrader().finishingCurrentThread();
+
+        Lib.assertTrue(toBeDestroyed == null);
+        toBeDestroyed = currentThread;
 
 
-	currentThread.status = statusFinished;
-	
-	sleep();
+        currentThread.status = statusFinished;
+        
+        // print out the statistics of the finished thread
+        if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
+        ((StaticPriorityScheduler) ThreadedKernel.scheduler).printThreadStats(toBeDestroyed);
+        }
+        else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.DynamicPriorityScheduler")){
+            ((DynamicPriorityScheduler) ThreadedKernel.scheduler).printThreadStats(toBeDestroyed);
+        }
+        else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.MultiLevelScheduler")){
+            ((MultiLevelScheduler) ThreadedKernel.scheduler).printThreadStats(toBeDestroyed);
+        }
+
+        sleep();
     }
 
     /**
@@ -423,25 +434,39 @@ public class KThread {
                 Machine.interrupt().enable();
                 thread.setName("SP thread").fork();
         }
+        
         // Create tests for Dynamic Priority
         else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.DynamicPriorityScheduler")){
-            for(int i=0; i<num; i++){
-                KThread thread = new KThread(new DelayTest(i, 20));
-                Machine.interrupt().disable();
-                ThreadedKernel.scheduler.setPriority(thread,5*i);
-                Machine.interrupt().enable();
-                thread.setName("DP thread").fork();
-            }
+            //Check that a running thread will be lower in priority
+            Machine.interrupt().disable();
+            KThread thread = new KThread(new DelayTest(0, 50));
+            ThreadedKernel.scheduler.setPriority(thread, 0);
+            Machine.interrupt().enable();
+            thread.setName("DP HP thread").fork();
+            
+            //Check that a waiting thread will be higher in priority
+            Machine.interrupt().disable();
+            thread = new KThread(new DelayTest(1, 20));
+            ThreadedKernel.scheduler.setPriority(thread, 10);
+            Machine.interrupt().enable();
+            thread.setName("DP LP thread").fork();
         }
+        
         // Create tests for MultiLevel
         else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.MultiLevelScheduler")){
-            for(int i=0; i<num; i++){
-                KThread thread = new KThread(new DelayTest(i, 20));
-                Machine.interrupt().disable();
-                ThreadedKernel.scheduler.setPriority(thread,20-10*i);
-                Machine.interrupt().enable();
-                thread.setName("ML thread").fork();
-            }
+            //Check that a running thread will be lower in priority
+            Machine.interrupt().disable();
+            KThread thread = new KThread(new DelayTest(0, 50));
+            ThreadedKernel.scheduler.setPriority(thread, 0);
+            Machine.interrupt().enable();
+            thread.setName("DP HP thread").fork();
+            
+            //Check that a waiting thread will be higher in priority
+            Machine.interrupt().disable();
+            thread = new KThread(new DelayTest(1, 20));
+            ThreadedKernel.scheduler.setPriority(thread, 23);
+            Machine.interrupt().enable();
+            thread.setName("DP LP thread").fork();
         }
         else
             System.out.println("you didn't run one of our schedulers");
