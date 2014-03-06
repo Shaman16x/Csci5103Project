@@ -35,7 +35,7 @@ public class StaticPriorityScheduler extends Scheduler{
         return (int) ((System.nanoTime() - startTime) / 1000000);
     }
 
-    //TODO: allow for printing to a file
+    //prints the status of every thread that is not ping or main
     
     // prints stats about the scheduled thread
     public void printScheduledThread(ThreadState thread){
@@ -43,12 +43,19 @@ public class StaticPriorityScheduler extends Scheduler{
             try{
             file = new FileWriter(outfile, true);
             writer = new PrintWriter(file);
-            writer.println(getSchedulerTime() + "," +thread.getThread().getID()+ "," + thread.getPriority());
+            String db = "";
+            if(Config.getString("printDebug") != null)      // debug output
+                db = thread.getThread().getName() + ":";
+            writer.println(getSchedulerTime() + "," + db + thread.getThread().getID()+ "," + thread.getPriority());
             writer.close();
             }catch(IOException e){}
         }
-        else
-            System.out.println(getSchedulerTime() + "," +thread.getThread().getID()+ "," + thread.getPriority());
+        else {
+            String db = "";
+            if(Config.getString("printDebug") != null)      // debug output
+                db = thread.getThread().getName() + ":";
+            System.out.println(getSchedulerTime() + "," + db + thread.getThread().getID()+ "," + thread.getPriority());
+        }
     }
 
     // prints the final stats of a thread that has executed

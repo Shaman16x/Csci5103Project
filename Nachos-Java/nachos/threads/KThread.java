@@ -415,8 +415,8 @@ public class KThread {
     public static void selfTest() {
 	Lib.debug(dbgThread, "Enter KThread.selfTest");
 
-    if(Config.getBoolean("runTests")){
-        //new KThread(new SchedTest1(0)).setName("Schedule Test 1").fork();
+    // run tests for PA1 if runTests is set to something
+    if(Config.getString("runTests") != null){
         int num= Integer.parseInt(Config.getString("Kernel.numThreads"));
         
         // Create tests for Static Priority
@@ -428,7 +428,8 @@ public class KThread {
                 Machine.interrupt().enable();
                 thread.setName("SP thread").fork();
             }
-                KThread thread = new KThread(new DelayTest(4, 10));
+                // create a thread with equal priority to a previous thread
+                KThread thread = new KThread(new DelayTest(3, 10));
                 Machine.interrupt().disable();
                 ThreadedKernel.scheduler.setPriority(thread,6);
                 Machine.interrupt().enable();
