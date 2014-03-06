@@ -8,7 +8,7 @@ import java.io.*;
 /**
  * Coordinates a group of thread queues of the same kind.
  *
- * @see	nachos.threads.ThreadQueue
+ * @see	nachos.pa1.MultiLevelQueue
  */
 public class MultiLevelScheduler extends Scheduler{
 
@@ -32,8 +32,11 @@ public class MultiLevelScheduler extends Scheduler{
         return minPriorityValue;
     }
 
-    // gets the age of the scheduler in ms
-    // div by 1000000 is used to convert ns to ms
+    /* gets the age of the scheduler in ms
+     * div by 1000000 is used to convert ns to ms
+     * 
+     * return: age of scheduler in ms
+     */
     public int getSchedulerTime() {
         return (int) ((System.nanoTime() - startTime) / 1000000);
     }
@@ -107,6 +110,7 @@ public class MultiLevelScheduler extends Scheduler{
     
     
     // creates a string of the system statistics
+    //return: string of system statistics
     public String getSystemStats(){
         int turnaroundTime = 0;
         int totalWaitTime = 0;
@@ -212,6 +216,8 @@ public class MultiLevelScheduler extends Scheduler{
     }
 
     // gets a thread state based off of the specified thread
+    //param KThread thread: thread state associated thread
+    //return: thread state with associated thread "thread"
     public ThreadState getThreadState(KThread thread){
         ThreadState state;
 
@@ -307,7 +313,7 @@ public class MultiLevelScheduler extends Scheduler{
      * @return	the current thread's priority.
      */
     public int getEffectivePriority() {
-	return getEffectivePriority(KThread.currentThread());
+        return getEffectivePriority(KThread.currentThread());
     }
 
     /**
@@ -347,30 +353,5 @@ public class MultiLevelScheduler extends Scheduler{
     public void setPriority(int priority) {
         setPriority(KThread.currentThread(), priority);
     }
-
-    /**
-     * If possible, raise the priority of the current thread in some
-     * scheduler-dependent way.
-     *
-     * @return	<tt>true</tt> if the scheduler was able to increase the current
-     *		thread's
-     *		priority.
-     */
-    public boolean increasePriority() {
-        return false;
-    }
-
-    /**
-     * If possible, lower the priority of the current thread user in some
-     * scheduler-dependent way, preferably by the same amount as would a call
-     * to <tt>increasePriority()</tt>.
-     *
-     * @return	<tt>true</tt> if the scheduler was able to decrease the current
-     *		thread's priority.
-     */
-    public boolean decreasePriority() {
-	return false;
-    }
-    
 }
 
