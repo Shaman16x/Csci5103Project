@@ -16,13 +16,13 @@ public class StaticPriorityScheduler extends Scheduler{
 
 	protected static ArrayList<ThreadState> states = new ArrayList<ThreadState>();
 
-	protected int maxPriorityValue = 10;
-	protected int minPriorityValue = 0;
+	protected int maxPriorityValue = 10;                    // The max priority value for the queue
+	protected int minPriorityValue = 0;                     // The min priority value for the queue
     protected long startTime = System.nanoTime();           // beginning of scheduler's life
-    protected long prevTime = System.nanoTime();            //stores the previous time call.
-    File outfile = null;
-    FileWriter file;
-    PrintWriter writer;
+    protected long prevTime = System.nanoTime();            // stores the previous time call.
+    File outfile = null;                                    // log file
+    FileWriter file;                                        // object used to write to the log file
+    PrintWriter writer;                                     // object used to write to the log file
     
     
     // for debugging purposes
@@ -39,6 +39,7 @@ public class StaticPriorityScheduler extends Scheduler{
     //prints the status of every thread that is not ping or main
     
     // prints stats about the scheduled thread
+    // param ThreadState thread: the thread state to be printed
     public void printScheduledThread(ThreadState thread){
         if(outfile != null){
             try{
@@ -60,6 +61,7 @@ public class StaticPriorityScheduler extends Scheduler{
     }
 
     // prints the final stats of a thread that has executed
+    // param ThreadState thread: the thread state to be printed
     public void printThreadStats(ThreadState thread){
         updateThreads(null);    //
         if(outfile != null){
@@ -318,15 +320,5 @@ public class StaticPriorityScheduler extends Scheduler{
             ThreadState st = getThreadState(currThread);
             st.status = ThreadState.QueueStatus.CURRENT;
         }
-    }
-
-    /*
-     * Defined to implement scheduler
-     */
-    public boolean increasePriority() {
-        return false;
-    }
-    public boolean decreasePriority() {
-        return false;
     }
 }
