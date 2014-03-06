@@ -7,8 +7,8 @@ import java.io.*;
 /*
  * This is the Queue class for the Static Priority Scheduler.
  * This implements a priority queue such that the next thread
- * scheduled is the first item in the queue.  The queue is
- * sorted from highest priority to lowest priority.
+ * scheduled is the first item in the queue (highest priority).
+ * The queue is sorted from highest priority to lowest priority.
  */
 
 public class StaticPriorityQueue extends ThreadQueue{
