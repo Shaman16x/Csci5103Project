@@ -121,11 +121,16 @@ last queue (lowest priority) : effective priority > 20
 Modifications to Nachos
 -------------------------------------------------------------------------
 Kthread:
-getID()
+	getID(): We created a getID() method so we could access the ID of a
+			 thread since its ID is private variable.
 
-selfTest mods
+	selfTest: We added our own tests to verify our schedulers.
 
+	finish: We added a call to the appropriate Scheduler print thread stats
+			method to log the statistics of the thread that finished as
+			described in the assignment write up.
 
 Machine:
-
-
+	halt: We added a call to the appropriate Scheduler print final stats
+		  method to log the final statistics of a Scheduler as described
+		  in the assignment write up.
