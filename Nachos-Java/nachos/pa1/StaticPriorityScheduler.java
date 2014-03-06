@@ -31,6 +31,7 @@ public class StaticPriorityScheduler extends Scheduler{
     }
 
     // gets the age of the scheduler in ms
+    // div by 1000000 is to convert ns to ms
     public int getSchedulerTime() {
         return (int) ((System.nanoTime() - startTime) / 1000000);
     }
@@ -99,8 +100,9 @@ public class StaticPriorityScheduler extends Scheduler{
         int maxWaitTime = 0;
         int totalThreads = 0;
         
+        // compute statistics over all threads that were scheduled
         for(ThreadState s: states){
-            //System.out.println(s.getStats());         // Debug printout
+            // div by 1000000 to convert ns to ms
             if(s.waitTime/1000000 > maxWaitTime){
                 maxWaitTime = (int)(s.waitTime/1000000);
             }

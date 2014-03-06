@@ -4,25 +4,25 @@ import nachos.threads.KThread;
 
 /*
  * ThreadState is a container used to hold a thread, an associated
- * priority, and the 
- * 
+ * priority, and status of thread in the queue
+ * Other local variables are used for quick calculation of various
+ * statistics including effective priority
  */
 
 public class ThreadState {
     
-    private int maxPriorityValue = 10;
-    private int minPriorityValue = 0;
-    private int agingTime = 1;
-    protected long runTime = 0;
-    protected long waitTime = 0;
+    private int maxPriorityValue = 10;  // local copy of the max Priority Value
+    private int minPriorityValue = 0;   // local copy of the min Priority Value
+    private int agingTime = 1;          // local copy of the aging time
+    protected long runTime = 0;         // how much time was spent running
+    protected long waitTime = 0;        // how much time was spent waiting
     protected long startTime = 0;       // when the thread was first scheduled (in ms)
-    public int queueLevel = 0;
-    protected QueueStatus status = QueueStatus.NOT_SCHEDULED;
-	/** The thread with which this object is associated. */	   
-	protected KThread thread;
-	/** The priority of the associated thread. */
-	protected int priority;
+    public int queueLevel = 0;          // queue level (used for debug)
+    protected QueueStatus status = QueueStatus.NOT_SCHEDULED;   // Queue Status
+    protected KThread thread;           // associated thread
+    protected int priority;             // priority of thread
     
+    // status of thread in queue
     public enum QueueStatus{
         NOT_SCHEDULED, INQUEUE, CURRENT, LIMBO
     }
@@ -35,9 +35,10 @@ public class ThreadState {
      */
     public ThreadState(KThread thread) {
         this.thread = thread;
-        setPriority(maxPriorityValue);     //TODO: use better default
+        setPriority(maxPriorityValue);
     }
 
+    // Perfered constructor call for ThreadState
     public ThreadState(KThread thread, int priority, int maxP, int a){
         this.thread = thread;
         setPriority(priority);
@@ -66,13 +67,16 @@ public class ThreadState {
 
 	/**
 	 * Return the effective priority of the associated thread.
-	 *
+	 * 
 	 * @return	the effective priority of the associated thread.
 	 */
 	public int getEffectivePriority() {
         if(agingTime <= 0) return getPriority();    // prevent div 0
-        
+        // div by 1000000 is to convert ns to ms
+        // change in priority is based on the difference of run and wait
         int ep = priority + (int)(((runTime - waitTime)/(1000000))/agingTime);
+        
+        // cap the effective priority as needed
         if(ep > maxPriorityValue)
             return maxPriorityValue;
         else if(ep < minPriorityValue)
@@ -100,6 +104,7 @@ public class ThreadState {
     }
     
     // prints the final stats of a thread
+    // div by 1000000 is to convert ns to ms
     public String getStats(){
         long run = runTime/1000000;
         long wait = waitTime/1000000;

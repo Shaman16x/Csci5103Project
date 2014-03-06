@@ -196,6 +196,7 @@ public class KThread {
         currentThread.status = statusFinished;
         
         // print out the statistics of the finished thread
+        // Will only do so if a pa1 schduler was used
         if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
         ((StaticPriorityScheduler) ThreadedKernel.scheduler).printThreadStats(toBeDestroyed);
         }

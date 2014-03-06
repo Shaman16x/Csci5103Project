@@ -14,12 +14,12 @@ public class MultiLevelScheduler extends Scheduler{
 
 	protected static ArrayList<ThreadState> states = new ArrayList<ThreadState>();
 
-	protected static int maxPriorityValue = 30;
-	protected static int minPriorityValue = 0;
-    protected long startTime = System.nanoTime();
-    protected long prevTime = System.nanoTime();                     //stores the previous time call.
-    protected static int agingTime = 10;
-    File outfile = null;
+	protected static int maxPriorityValue = 30;     // maximum priority
+	protected static int minPriorityValue = 0;      // minimum priority
+    protected long startTime = System.nanoTime();   // store the epoch of the scheduler
+    protected long prevTime = System.nanoTime();    // stores the previous time call.
+    protected static int agingTime = 10;            // aging time quantum
+    File outfile = null;                            // logfile
     FileWriter file;
     PrintWriter writer;
 
@@ -33,6 +33,7 @@ public class MultiLevelScheduler extends Scheduler{
     }
 
     // gets the age of the scheduler in ms
+    // div by 1000000 is used to convert ns to ms
     public int getSchedulerTime() {
         return (int) ((System.nanoTime() - startTime) / 1000000);
     }
@@ -41,6 +42,7 @@ public class MultiLevelScheduler extends Scheduler{
     public void printScheduledThread(ThreadState thread){
         if(outfile != null){
             try{
+            // Print to file
             file = new FileWriter(outfile, true);
             writer = new PrintWriter(file);
             String db = "";     // debug output strings
@@ -54,6 +56,7 @@ public class MultiLevelScheduler extends Scheduler{
             }catch(IOException e){}
         }
         else {
+            //print to console
             String db = "";     // debug output strings
             String ql = "";
             if(Config.getString("printDebug") != null){
@@ -69,6 +72,7 @@ public class MultiLevelScheduler extends Scheduler{
         updatePriorities(null);
         if(outfile != null){
             try{
+            // Print to file
             file = new FileWriter(outfile, true);
             writer = new PrintWriter(file);
             writer.println(thread.getStats());
@@ -76,6 +80,7 @@ public class MultiLevelScheduler extends Scheduler{
             }catch(IOException e){}
         }
         else
+            // Print to console
             System.out.println(thread.getStats());
     }
     
@@ -88,6 +93,7 @@ public class MultiLevelScheduler extends Scheduler{
     public void printFinalStats(){
         if(outfile != null){
             try{
+            // Print to file
             file = new FileWriter(outfile, true);
             writer = new PrintWriter(file);
             writer.println("System," + getSystemStats());
@@ -95,17 +101,20 @@ public class MultiLevelScheduler extends Scheduler{
             }catch(IOException e){}
         }
         else
+            // Print to console
             System.out.println("System," + getSystemStats());
     }
     
     
-    // Prints the system statistics
+    // creates a string of the system statistics
     public String getSystemStats(){
         int turnaroundTime = 0;
         int totalWaitTime = 0;
         int maxWaitTime = 0;
         int totalThreads = 0;
         
+        // itterate over all threads that used the scheduler
+        // div by 1000000 is used to convert ns to ms
         for(ThreadState s: states){
             if(s.waitTime/1000000 > maxWaitTime){
                 maxWaitTime = (int)(s.waitTime/1000000);
