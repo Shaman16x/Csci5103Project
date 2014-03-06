@@ -2,10 +2,12 @@ Jeremiah Thomas:4145047
 Kyle Michaels:3914066
 
 How To Compile
+----------------------------------------------------------------------------
+	In the Nachos-Java directory type "make".
 
-	In the Nachos-Java directory type make.
 
 How To Run Schedulers
+----------------------------------------------------------------------------
 To use these Schedulers in Nachos change "ThreadedKernel.scheduler = nachos.threads.RoundRobinScheduler"
 in the nachos.conf file in Nachos-Java directory to equal our Schedulers.
 Nachos
@@ -22,7 +24,20 @@ The configuration parameters added were added for all Schedulers and are as foll
     printDebug: When true, additional information will be printed to the logfile
 
 
+File Locations/Modifications
+-----------------------------------------------------------------------------
+All files that implement the new Schedulers are located in
+Nachos-Java/nachos/pa1.  
+All new configuration files and bash scripts are located in Nachos-Java
+
+In addition to new files, we modified the existing files
+*Machine.java
+*KThread.java
+*Makefile
+
+
 Tests
+-------------------------------------------------------------------------------
 To perform tests the selfTest function KThread was modified to create senarios based which scheduler is used at the time.
 To run these tests run the each new conf file (pa1_*.conf) added to Nachos-Java/
 EG:
@@ -33,6 +48,9 @@ Conversely, run the bash script "runTests.sh" to run all tests automaticly.
 This will generate two sets of test files.  One file per scheduler per set.
 The *LogFile.txt files  outputs as expect by the assignment.
 And *TestFile.txt files output additional information that help understanding the results.
+
+To ouput logs to the terminal run the pa1_*console.conf configurations.
+The output is iden
 
 Test Threads
     All test threads created are DelayTest objects.  This class will wait a specified number of miliseconds.  
@@ -56,5 +74,3 @@ The log files are located in the Nachos-Java directory and named:
 	Multi-Level: "MLLogFile.txt", "MLTestFile.txt"
 
 
-All of Scheduler files are located in Nachos-Java/nachos/pa1.  We also added functionality to KThread
-to meet the requirments of the assignment.
