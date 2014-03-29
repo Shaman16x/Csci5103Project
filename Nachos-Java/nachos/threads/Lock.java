@@ -74,6 +74,6 @@ public class Lock {
     }
 
     private KThread lockHolder = null;
-    private ThreadQueue waitQueue =
-	ThreadedKernel.scheduler.newThreadQueue(true);
+    RoundRobinScheduler sched = new RoundRobinScheduler();          //this is fifo scheduler
+    private ThreadQueue waitQueue =	sched.newThreadQueue(true);
 }
