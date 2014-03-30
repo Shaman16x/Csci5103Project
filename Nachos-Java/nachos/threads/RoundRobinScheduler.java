@@ -27,7 +27,7 @@ public class RoundRobinScheduler extends Scheduler {
      * @return	a new FIFO thread queue.
      */
     public ThreadQueue newThreadQueue(boolean transferPriority) {
-	return new FifoQueue();
+        return new FifoQueue();
     }
 
     private class FifoQueue extends ThreadQueue {
@@ -38,7 +38,7 @@ public class RoundRobinScheduler extends Scheduler {
 	 */    
 	public void waitForAccess(KThread thread) {
 	    Lib.assertTrue(Machine.interrupt().disabled());
-		       
+        
 	    waitQueue.add(thread);
 	}
 
@@ -78,6 +78,10 @@ public class RoundRobinScheduler extends Scheduler {
 	    for (Iterator i=waitQueue.iterator(); i.hasNext(); )
 		System.out.print((KThread) i.next() + " ");
 	}
+    
+    public LinkedList<KThread> getList(){
+        return waitQueue;
+    }
 
 	private LinkedList waitQueue = new LinkedList();
     }

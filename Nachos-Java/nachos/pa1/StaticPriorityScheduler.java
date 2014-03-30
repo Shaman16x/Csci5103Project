@@ -24,6 +24,25 @@ public class StaticPriorityScheduler extends Scheduler{
     FileWriter file;                                        // object used to write to the log file
     PrintWriter writer;                                     // object used to write to the log file
     
+    //
+    public void addLock(KThread thread, Lock l){
+        getThreadState(thread).addLock(l);
+    }
+    
+    public void removeLock(KThread thread){
+        getThreadState(thread).removeLock();
+    }
+    
+    // donates priority of thread from to thread to
+    public void donate(KThread from, KThread to){
+        if(getPriority(from) < getThreadState(to).getDonatedPriority())
+            getThreadState(to).setDonatedPriority(getPriority(from));
+    }
+    
+    // sets donted priority to actual priority of the thread
+    public void resetDonatedPriority(KThread thread){
+        getThreadState(thread).setDonatedPriority(getPriority(thread));
+    }
     
     // for debugging purposes
     public int getMaxPriorityValue(){

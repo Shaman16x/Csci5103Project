@@ -1,5 +1,5 @@
 package nachos.threads;
-
+import nachos.pa1.*;
 import nachos.machine.*;
 
 /**
@@ -35,14 +35,15 @@ public class Lock {
 
 	boolean intStatus = Machine.interrupt().disable();
 	KThread thread = KThread.currentThread();
-
 	if (lockHolder != null) {
+        temp.donate(thread, lockHolder);
 	    waitQueue.waitForAccess(thread);
 	    KThread.sleep();
 	}
 	else {
 	    waitQueue.acquire(thread);
 	    lockHolder = thread;
+        temp.addLock(thread,this);
 	}
 
 	Lib.assertTrue(lockHolder == thread);
@@ -57,10 +58,10 @@ public class Lock {
 	Lib.assertTrue(isHeldByCurrentThread());
 
 	boolean intStatus = Machine.interrupt().disable();
-
+    KThread thread = lockHolder;
 	if ((lockHolder = waitQueue.nextThread()) != null)
 	    lockHolder.ready();
-	
+	temp.removeLock(thread);
 	Machine.interrupt().restore(intStatus);
     }
 
@@ -72,7 +73,12 @@ public class Lock {
     public boolean isHeldByCurrentThread() {
 	return (lockHolder == KThread.currentThread());
     }
-
+    
+    public KThread getLockHolder(){
+        return lockHolder;
+    }
+    
+    StaticPriorityScheduler temp = new StaticPriorityScheduler();
     private KThread lockHolder = null;
     RoundRobinScheduler sched = new RoundRobinScheduler();          //this is fifo scheduler
     private ThreadQueue waitQueue =	sched.newThreadQueue(true);

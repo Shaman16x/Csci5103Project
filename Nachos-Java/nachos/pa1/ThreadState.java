@@ -1,6 +1,7 @@
 package nachos.pa1;
 
-import nachos.threads.KThread;
+import java.util.*;
+import nachos.threads.*;
 
 /*
  * ThreadState is a container used to hold a thread, an associated
@@ -22,6 +23,24 @@ public class ThreadState {
     protected QueueStatus status = QueueStatus.NOT_SCHEDULED;   // Queue Status
     protected KThread thread;           // associated thread
     protected int priority;             // priority of thread
+    protected int donatedPriority;         // donated priority
+    
+    protected LinkedList<Lock> heldLocks = new LinkedList<Lock>();
+    
+    public void addLock(Lock l){
+        heldLocks.add(l);
+    }
+    
+    public void removeLock(){
+        for(int i=0; i<heldLocks.size(); i++){
+            if(heldLocks.get(i).getLockHolder().compareTo(thread) == 0){
+                heldLocks.remove(i);
+                i--;
+            }
+        }
+        if(heldLocks.size() == 0)
+            setDonatedPriority(priority);
+    }
     
     // status of thread in queue
     public enum QueueStatus{
@@ -58,7 +77,7 @@ public class ThreadState {
      * @return	the priority of the associated thread.
      */
     public int getPriority() {
-        return priority;
+        return donatedPriority;
     }
 
     // gets the accossiated thread
@@ -98,6 +117,14 @@ public class ThreadState {
      */
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+    
+    public void setDonatedPriority(int priority){
+        this.donatedPriority = priority;
+    }
+    
+    public int getDonatedPriority(){
+        return donatedPriority;
     }
     
     public String toString() {
