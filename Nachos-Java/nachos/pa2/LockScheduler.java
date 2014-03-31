@@ -1,6 +1,7 @@
-package nachos.threads;
+package nachos.pa2;
 
 import nachos.machine.*;
+import nachos.threads.*;
 
 import java.util.LinkedList;
 import java.util.Iterator;
@@ -12,11 +13,11 @@ import java.util.Iterator;
  * thread in the list. This causes access to be given on a first-come
  * first-serve basis.
  */
-public class RoundRobinScheduler extends Scheduler {
+public class LockScheduler extends Scheduler {
     /**
      * Allocate a new round-robin scheduler.
      */
-    public RoundRobinScheduler() {
+    public LockScheduler() {
     }
     
     /**

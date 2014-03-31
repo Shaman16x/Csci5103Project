@@ -1,4 +1,4 @@
-package nachos.pa1;
+package nachos.pa2;
 
 import nachos.threads.*;
 import java.util.*;

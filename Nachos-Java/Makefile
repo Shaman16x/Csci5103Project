@@ -29,13 +29,16 @@ vm =		VMKernel VMProcess
 
 network = 	NetKernel NetProcess PostOffice MailMessage
 
-pa1 =		StaticPriorityScheduler StaticPriorityQueue \
-			DynamicPriorityScheduler DynamicPriorityQueue \
+pa1 =		DynamicPriorityScheduler DynamicPriorityQueue \
 			MultiLevelScheduler MultiLevelQueue \
 			DelayTest \
 			ThreadState \
 
-ALLDIRS = machine security ag threads userprog vm network pa1
+pa2 =       StaticPriorityScheduler StaticPriorityQueue \
+            LockScheduler \
+            ThreadState
+
+ALLDIRS = machine security ag threads userprog vm network pa1 pa2
 
 PACKAGES := $(patsubst %,nachos.%,$(ALLDIRS))
 
