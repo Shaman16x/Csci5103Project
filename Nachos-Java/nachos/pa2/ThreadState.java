@@ -85,12 +85,12 @@ public class ThreadState {
         return thread;
     }
 
-	/**
-	 * Return the effective priority of the associated thread.
-	 * 
-	 * @return	the effective priority of the associated thread.
-	 */
-	public int getEffectivePriority() {
+    /**
+     * Return the effective priority of the associated thread.
+     * 
+     * @return	the effective priority of the associated thread.
+     */
+    public int getEffectivePriority() {
         if(agingTime <= 0) return getPriority();    // prevent div 0
         // div by 1000000 is to convert ns to ms
         // change in priority is based on the difference of run and wait
@@ -103,7 +103,7 @@ public class ThreadState {
             return minPriorityValue;
         else
             return ep;
-	}
+    }
 
     // checks if two thread states are referencing the same thread
     public boolean sameThread(ThreadState state){

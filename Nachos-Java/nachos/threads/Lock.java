@@ -1,5 +1,5 @@
 package nachos.threads;
-import nachos.pa1.*;
+import nachos.pa2.*;
 import nachos.machine.*;
 
 /**
@@ -31,38 +31,38 @@ public class Lock {
      * this lock.
      */
     public void acquire() {
-	Lib.assertTrue(!isHeldByCurrentThread());
+        Lib.assertTrue(!isHeldByCurrentThread());
 
-	boolean intStatus = Machine.interrupt().disable();
-	KThread thread = KThread.currentThread();
-	if (lockHolder != null) {
-        temp.donate(thread, lockHolder);
-	    waitQueue.waitForAccess(thread);
-	    KThread.sleep();
-	}
-	else {
-	    waitQueue.acquire(thread);
-	    lockHolder = thread;
-        temp.addLock(thread,this);
-	}
+        boolean intStatus = Machine.interrupt().disable();
+        KThread thread = KThread.currentThread();
+        if (lockHolder != null) {
+            temp.donate(thread, lockHolder);
+            waitQueue.waitForAccess(thread);
+            KThread.sleep();
+        }
+        else {
+            waitQueue.acquire(thread);
+            lockHolder = thread;
+            temp.addLock(thread,this);
+    }
 
-	Lib.assertTrue(lockHolder == thread);
+        Lib.assertTrue(lockHolder == thread);
 
-	Machine.interrupt().restore(intStatus);
+        Machine.interrupt().restore(intStatus);
     }
 
     /**
      * Atomically release this lock, allowing other threads to acquire it.
      */
     public void release() {
-	Lib.assertTrue(isHeldByCurrentThread());
+        Lib.assertTrue(isHeldByCurrentThread());
 
-	boolean intStatus = Machine.interrupt().disable();
-    KThread thread = lockHolder;
-	if ((lockHolder = waitQueue.nextThread()) != null)
-	    lockHolder.ready();
-	temp.removeLock(thread);
-	Machine.interrupt().restore(intStatus);
+        boolean intStatus = Machine.interrupt().disable();
+        KThread thread = lockHolder;
+        if ((lockHolder = waitQueue.nextThread()) != null)
+            lockHolder.ready();
+        temp.removeLock(thread);
+        Machine.interrupt().restore(intStatus);
     }
 
     /**
@@ -71,7 +71,7 @@ public class Lock {
      * @return	true if the current thread holds this lock.
      */
     public boolean isHeldByCurrentThread() {
-	return (lockHolder == KThread.currentThread());
+        return (lockHolder == KThread.currentThread());
     }
     
     public KThread getLockHolder(){
@@ -80,6 +80,6 @@ public class Lock {
     
     StaticPriorityScheduler temp = new StaticPriorityScheduler();
     private KThread lockHolder = null;
-    RoundRobinScheduler sched = new RoundRobinScheduler();          //this is fifo scheduler
+    LockScheduler sched = new LockScheduler();          //this is fifo scheduler
     private ThreadQueue waitQueue =	sched.newThreadQueue(true);
 }

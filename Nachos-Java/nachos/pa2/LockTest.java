@@ -5,13 +5,13 @@ import nachos.threads.*;
 // waits for x number of miliseconds
 // then finishes execution
 public class DelayTest implements Runnable {
-	public DelayTest(int num, int time) {
-	    this.time = time;
+    public DelayTest(int num, int time) {
+        this.time = time;
         this.num = num;
-	}
-	
-	public void run() {
-	    for (int i=0; i<time; i++) {
+    }
+
+    public void run() {
+        for (int i=0; i<time; i++) {
             waitMS();
             
             if(i%5 == 0)   {
@@ -19,8 +19,8 @@ public class DelayTest implements Runnable {
                        + i + " ms");
             }
             KThread.currentThread().yield();
-	    }
-	}
+        }
+    }
 
     // wait for 1ms
     public void waitMS(){
@@ -31,5 +31,5 @@ public class DelayTest implements Runnable {
     
     private int num;
     private int count = 0;
-	private int time;
+    private int time;
 }
