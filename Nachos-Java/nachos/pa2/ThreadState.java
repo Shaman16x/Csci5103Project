@@ -35,7 +35,6 @@ public class ThreadState {
         heldLocks.remove(l);
         if(heldLocks.size() == 0)
             setDonatedPriority(priority);
-        
     }
     
     // status of thread in queue
@@ -113,6 +112,7 @@ public class ThreadState {
      */
     public void setPriority(int priority) {
         this.priority = priority;
+        this.donatedPriority = priority;
     }
     
     public void setDonatedPriority(int priority){
