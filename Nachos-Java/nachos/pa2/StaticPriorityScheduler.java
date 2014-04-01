@@ -30,23 +30,44 @@ public class StaticPriorityScheduler extends Scheduler{
     }
     
     public void removeLock(KThread thread, Lock l){
-        getThreadState(thread).removeLock(l);
+        ThreadState s = getThreadState(thread);
+        s.removeLock(l);
+        resetDonatedPriority(thread);
+        int newDonationValue = getPriority(thread);
+        for(Lock lock:s.getHeldLocks())
+            if(lock.highestPriority < newDonationValue)
+                newDonationValue = lock.highestPriority;
+        s.setDonatedPriority(newDonationValue);
+        donate(thread, s.getWaitingLock().getLockHolder(), s.getWaitingLock(), false);
     }
     
-    // donates priority of thread from to thread to
-    public void donate(KThread from, KThread to, Lock l){
-        if(getPriority(from) < getThreadState(to).getDonatedPriority()){
-            getThreadState(to).setDonatedPriority(getPriority(from));
-            KThread newTo;
-            for(ThreadState s:states){
-                // if(s is holding l)
-                    // do stuff
+    // donates priority of thread from to thread to if
+    //    if from's donated priority is less than to's
+    //    donated priority.
+    // params: from: thread waiting
+    //         to: thread current;y holding lock l
+    //         l: lock held by thread to
+    //         setWaiting: flag to set the waiting lock of a thread
+    public void donate(KThread from, KThread to, Lock l, boolean setWaiting){
+        if(setWaiting)
+            getThreadState(from).setWaitingLock(l);
+        
+        if(getPriority(from) < getThreadState(to).getPriority()){
+            ThreadState s = getThreadState(to);
+            s.setDonatedPriority(getPriority(from));
+            
+            // this donates the priority of FROM to the threads that TO is waitng for
+            if((Lock lock = s.getWaitingLock()) != null){
+                if((KThread newTo = lock.getLockHolder()) != null){
+                    donate(from, newTo, lock, false);
+                }
             }
+        }
     }
     
     // sets donted priority to actual priority of the thread
     public void resetDonatedPriority(KThread thread){
-        getThreadState(thread).setDonatedPriority(getPriority(thread));
+        getThreadState(thread).resetDonatedPriority();
     }
     
     // for debugging purposes
