@@ -68,9 +68,11 @@ public class Lock {
         KThread thread = lockHolder;
         
         highestPriority = temp.getMaxPriorityValue();
-        for(KThread t:waitQueue.getList())
-            if((int p = temp.getThreadState(t).getPriority()) < highestPriority)
+        for(KThread t:((LockScheduler.FifoQueue)waitQueue).getList()){
+            int p;
+            if((p = temp.getThreadState(t).getPriority()) < highestPriority)
                 highestPriority = p;
+        }
         
         if ((lockHolder = waitQueue.nextThread()) != null)
             lockHolder.ready();

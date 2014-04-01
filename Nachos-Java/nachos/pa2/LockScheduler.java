@@ -31,7 +31,7 @@ public class LockScheduler extends Scheduler {
         return new FifoQueue();
     }
 
-    private class FifoQueue extends ThreadQueue {
+    public class FifoQueue extends ThreadQueue {
 	/**
 	 * Add a thread to the end of the wait queue.
 	 *
