@@ -27,6 +27,7 @@ public class ThreadState {
     
     protected LinkedList<Lock> heldLocks = new LinkedList<Lock>();
     
+    
     public void addLock(Lock l){
         heldLocks.add(l);
     }

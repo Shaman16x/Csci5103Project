@@ -25,6 +25,8 @@ public class Lock {
      */
     public Lock() {
     }
+    
+    
 
     /**
      * Atomically acquire this lock. The current thread must not already hold
@@ -36,7 +38,7 @@ public class Lock {
         boolean intStatus = Machine.interrupt().disable();
         KThread thread = KThread.currentThread();
         if (lockHolder != null) {
-            temp.donate(thread, lockHolder);
+            temp.donate(thread, lockHolder, this);
             waitQueue.waitForAccess(thread);
             KThread.sleep();
         }

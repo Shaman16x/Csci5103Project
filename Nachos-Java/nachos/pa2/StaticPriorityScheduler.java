@@ -34,9 +34,14 @@ public class StaticPriorityScheduler extends Scheduler{
     }
     
     // donates priority of thread from to thread to
-    public void donate(KThread from, KThread to){
-        if(getPriority(from) < getThreadState(to).getDonatedPriority())
+    public void donate(KThread from, KThread to, Lock l){
+        if(getPriority(from) < getThreadState(to).getDonatedPriority()){
             getThreadState(to).setDonatedPriority(getPriority(from));
+            KThread newTo;
+            for(ThreadState s:states){
+                // if(s is holding l)
+                    // do stuff
+            }
     }
     
     // sets donted priority to actual priority of the thread
