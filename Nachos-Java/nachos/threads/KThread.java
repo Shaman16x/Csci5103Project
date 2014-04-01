@@ -479,8 +479,37 @@ public class KThread {
         }
         else
         */
+
         if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa2.StaticPriorityScheduler")){
-            System.out.println("PA2 tests are a WIP!!!");      // TODO: implement tests
+            System.out.println("PA2 tests are a WIP!!!");      // TODO: implement tests correctly
+            Lock l1 = new Lock();
+            Lock l2 = new Lock();
+            KThread thread;
+            
+            if(l1 == null)
+                System.out.println("We've got a problem");
+            
+            // Create a low priority Lock holder
+            Machine.interrupt().disable();
+            thread = new KThread(new LockTest("Low  Thread", 4, 50, l1));
+            ThreadedKernel.scheduler.setPriority(thread, 1);
+            Machine.interrupt().enable();
+            thread.setName("Lock LP Thread").fork();
+            
+            // Create a middle priority Lock holder
+            Machine.interrupt().disable();
+            thread = new KThread(new LockTest("Mid  Thread", 3,  20, l1));
+            ThreadedKernel.scheduler.setPriority(thread, 1);
+            Machine.interrupt().enable();
+            thread.setName("Lock MP Thread").fork();
+            
+            // Create a high priority Lock holder
+            Machine.interrupt().disable();
+            thread = new KThread(new LockTest("High Thread", 2, 20, l1));
+            ThreadedKernel.scheduler.setPriority(thread, 1);
+            Machine.interrupt().enable();
+            thread.setName("Lock HP Thread").fork();
+            
         }
         else
             System.out.println("you didn't run one of our schedulers");

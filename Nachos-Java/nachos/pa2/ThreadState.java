@@ -127,6 +127,7 @@ public class ThreadState {
      */
     public void setPriority(int priority) {
         this.priority = priority;
+        this.donatedPriority = priority;
     }
     
     public void resetDonatedPriority(){
