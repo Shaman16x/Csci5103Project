@@ -101,6 +101,7 @@ public class StaticPriorityScheduler extends Scheduler{
     }
 
     public void printTryLock(KThread thread, Lock l){
+        if (thread == null) return;
         String db = "";
         ThreadState ts = getThreadState(thread);
         if(Config.getString("printDebug") != null)      // debug output

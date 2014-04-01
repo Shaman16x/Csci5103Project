@@ -66,7 +66,7 @@ public class LockScheduler extends Scheduler {
 	 */
 	public void acquire(KThread thread) {
 	    Lib.assertTrue(Machine.interrupt().disabled());
-		       
+        
 	    Lib.assertTrue(waitQueue.isEmpty());
 	}
 

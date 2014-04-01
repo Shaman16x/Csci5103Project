@@ -25,6 +25,9 @@ public class LockTest implements Runnable {
     public void run() {
         Machine.interrupt().disable();
         ThreadedKernel.scheduler.setPriority(KThread.currentThread(), priority);
+        // Make sure threadState exists
+        ThreadQueue waitQueue =	ThreadedKernel.scheduler.newThreadQueue(true);
+        waitQueue.waitForAccess(KThread.currentThread());
         if(lock != null)
             lock.acquire();
         Machine.interrupt().enable();
