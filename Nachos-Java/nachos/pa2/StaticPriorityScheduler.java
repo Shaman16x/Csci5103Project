@@ -38,7 +38,9 @@ public class StaticPriorityScheduler extends Scheduler{
             if(lock.getHighestPriority() < newDonationValue)
                 newDonationValue = lock.getHighestPriority();
         s.setDonatedPriority(newDonationValue);
-        donate(thread, s.getWaitingLock().getLockHolder(), s.getWaitingLock(), false);
+        Lock waitingLock;
+        if((waitingLock = s.getWaitingLock()) != null)
+            donate(thread, waitingLock.getLockHolder(), waitingLock, false);
     }
     
     // donates priority of thread from to thread to if
@@ -49,9 +51,12 @@ public class StaticPriorityScheduler extends Scheduler{
     //         l: lock held by thread to
     //         setWaiting: flag to set the waiting lock of a thread
     public void donate(KThread from, KThread to, Lock l, boolean setWaiting){
+        if(from == null || to == null)
+            return;
+        
         if(setWaiting)
             getThreadState(from).setWaitingLock(l);
-        
+            
         if(getPriority(from) < getThreadState(to).getPriority()){
             ThreadState s = getThreadState(to);
             s.setDonatedPriority(getPriority(from));
@@ -247,9 +252,12 @@ public class StaticPriorityScheduler extends Scheduler{
 
     public ThreadState getThreadState(KThread thread){
         ThreadState state;
-
+        
+        if(thread == null)
+            return null;
+        
         for(ThreadState s : states){
-            if(s.getThread().compareTo(thread) == 0){
+            if(thread.compareTo(s.getThread()) == 0){
                 return s;
             }
         }
@@ -359,7 +367,7 @@ public class StaticPriorityScheduler extends Scheduler{
             }
             else if(s.status == ThreadState.QueueStatus.CURRENT){
                 s.runTime += time;
-                if(currThread != null && s.thread.compareTo(currThread) != 0){
+                if(currThread != null && currThread.compareTo(s.thread) != 0){
                     s.status = ThreadState.QueueStatus.LIMBO;
                 }
             }
