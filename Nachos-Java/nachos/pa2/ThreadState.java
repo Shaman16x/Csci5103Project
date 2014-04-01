@@ -32,15 +32,11 @@ public class ThreadState {
         heldLocks.add(l);
     }
     
-    public void removeLock(){
-        for(int i=0; i<heldLocks.size(); i++){
-            if(heldLocks.get(i).getLockHolder().compareTo(thread) == 0){
-                heldLocks.remove(i);
-                i--;
-            }
-        }
+    public void removeLock(Lock l){
+        heldLocks.remove(l);
         if(heldLocks.size() == 0)
             setDonatedPriority(priority);
+        
     }
     
     // status of thread in queue

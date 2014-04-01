@@ -29,8 +29,8 @@ public class StaticPriorityScheduler extends Scheduler{
         getThreadState(thread).addLock(l);
     }
     
-    public void removeLock(KThread thread){
-        getThreadState(thread).removeLock();
+    public void removeLock(KThread thread, Lock l){
+        getThreadState(thread).removeLock(l);
     }
     
     // donates priority of thread from to thread to

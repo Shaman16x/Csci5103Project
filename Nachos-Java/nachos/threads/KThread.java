@@ -1,7 +1,8 @@
 package nachos.threads;
 
 import nachos.machine.*;
-import nachos.pa1.*;
+//import nachos.pa1.*;
+import nachos.pa2.*;
 
 /**
  * A KThread is a thread that can be used to execute Nachos kernel code. Nachos
@@ -197,6 +198,7 @@ public class KThread {
         
         // print out the statistics of the finished thread
         // Will only do so if a pa1 schduler was used
+        /*
         if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
         ((StaticPriorityScheduler) ThreadedKernel.scheduler).printThreadStats(toBeDestroyed);
         }
@@ -206,7 +208,11 @@ public class KThread {
         else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.MultiLevelScheduler")){
             ((MultiLevelScheduler) ThreadedKernel.scheduler).printThreadStats(toBeDestroyed);
         }
-
+        */
+        
+        if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa2.StaticPriorityScheduler")){      // TODO: check if this is still needed
+        ((StaticPriorityScheduler) ThreadedKernel.scheduler).printThreadStats(toBeDestroyed);
+        }
         sleep();
     }
 
@@ -421,6 +427,7 @@ public class KThread {
         int num= Integer.parseInt(Config.getString("Kernel.numThreads"));
         
         // Create tests for Static Priority
+        /*
         if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
             for(int i=0; i<num; i++){
                 KThread thread = new KThread(new DelayTest(i, 10));
@@ -469,6 +476,11 @@ public class KThread {
             ThreadedKernel.scheduler.setPriority(thread, 23);
             Machine.interrupt().enable();
             thread.setName("DP LP thread").fork();
+        }
+        else
+        */
+        if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa2.StaticPriorityScheduler")){
+            System.out.println("PA2 tests are a WIP!!!");      // TODO: implement tests
         }
         else
             System.out.println("you didn't run one of our schedulers");

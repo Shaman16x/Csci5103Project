@@ -5,9 +5,10 @@ package nachos.machine;
 import nachos.security.*;
 import nachos.ag.*;
 import nachos.threads.ThreadedKernel;
-import nachos.pa1.StaticPriorityScheduler;
-import nachos.pa1.DynamicPriorityScheduler;
-import nachos.pa1.MultiLevelScheduler;
+//import nachos.pa1.StaticPriorityScheduler;
+//import nachos.pa1.DynamicPriorityScheduler;
+//import nachos.pa1.MultiLevelScheduler;
+import nachos.pa2.StaticPriorityScheduler;
 
 import java.io.File;
 
@@ -100,6 +101,7 @@ public final class Machine {
      */
     public static void halt() {
     // if running a pa1 scheduler, print out final system statistics
+    /*
     if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
         ((StaticPriorityScheduler) ThreadedKernel.scheduler).printFinalStats();
     }
@@ -108,6 +110,10 @@ public final class Machine {
     }
     else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.MultiLevelScheduler")){
         ((MultiLevelScheduler) ThreadedKernel.scheduler).printFinalStats();
+    }
+    */
+    if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa2.StaticPriorityScheduler")){     //TODO: make sure we need this
+        ((StaticPriorityScheduler) ThreadedKernel.scheduler).printFinalStats();
     }
 	System.out.print("Machine halting!\n\n");   
 
