@@ -25,6 +25,8 @@ public class Lock {
      */
     public Lock() {
     }
+    
+    
 
     /**
      * Atomically acquire this lock. The current thread must not already hold
@@ -36,13 +38,16 @@ public class Lock {
         boolean intStatus = Machine.interrupt().disable();
         KThread thread = KThread.currentThread();
         if (lockHolder != null) {
-            temp.donate(thread, lockHolder);
+            if((int p = temp.getPriority(thread)) < highestPriority)
+                highestPriority = p;
+            temp.donate(thread, lockHolder, this, true);
             waitQueue.waitForAccess(thread);
             KThread.sleep();
         }
         else {
             waitQueue.acquire(thread);
             lockHolder = thread;
+            highestPriority = temp.getPriority(thread);
             temp.addLock(thread,this);
     }
 
@@ -64,6 +69,10 @@ public class Lock {
         temp.removeLock(thread, this);
         Machine.interrupt().restore(intStatus);
     }
+    
+    pulbic boolean isWaitingFor(KThread thread){
+        
+    }
 
     /**
      * Test if the current thread holds this lock.
@@ -78,8 +87,10 @@ public class Lock {
         return lockHolder;
     }
     
+    
     StaticPriorityScheduler temp = new StaticPriorityScheduler();
     private KThread lockHolder = null;
+    int highestPriority = temp.getMaxPriorityValue();
     LockScheduler sched = new LockScheduler();          //this is fifo scheduler
     private ThreadQueue waitQueue =	sched.newThreadQueue(true);
 }

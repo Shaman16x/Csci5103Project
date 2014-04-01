@@ -25,16 +25,31 @@ public class ThreadState {
     protected int priority;             // priority of thread
     protected int donatedPriority;         // donated priority
     
+    protected Lock waitingLock;
     protected LinkedList<Lock> heldLocks = new LinkedList<Lock>();
+    
+    public void setWaitingLock(Lock l){
+        waitingLock = l;
+    }
+    
+    public Lock getWaitingLock(){
+        return waitingLock;
+    }
     
     public void addLock(Lock l){
         heldLocks.add(l);
+        waitingLock = null;
     }
     
     public void removeLock(Lock l){
         heldLocks.remove(l);
+        
         if(heldLocks.size() == 0)
             setDonatedPriority(priority);
+    }
+    
+    public LinkedList<Lock> getHeldLocks(){
+        return heldLocks;
     }
     
     // status of thread in queue
@@ -113,6 +128,10 @@ public class ThreadState {
     public void setPriority(int priority) {
         this.priority = priority;
         this.donatedPriority = priority;
+    }
+    
+    public void resetDonatedPriority(){
+        donatedPriority = priority;
     }
     
     public void setDonatedPriority(int priority){
