@@ -37,7 +37,7 @@ public class Lock {
         int p;
         boolean intStatus = Machine.interrupt().disable();
         KThread thread = KThread.currentThread();
-        temp.printTryLock(thread);
+        temp.printTryLock(thread, this);
         if (lockHolder != null) {
             if((p = temp.getPriority(thread)) < highestPriority)
                 highestPriority = p;
@@ -48,7 +48,7 @@ public class Lock {
         else {
             waitQueue.acquire(thread);
             lockHolder = thread;
-            temp.printAquireLock(lockHolder);
+            temp.printAquireLock(lockHolder, this);
             highestPriority = temp.getPriority(thread);
             temp.addLock(thread,this);
         }
@@ -66,7 +66,7 @@ public class Lock {
 
         boolean intStatus = Machine.interrupt().disable();
         KThread thread = lockHolder;
-        temp.printReleaseLock(lockHolder);
+        temp.printReleaseLock(lockHolder, this);
         
         highestPriority = temp.getMaxPriorityValue();
         for(KThread t:((LockScheduler.FifoQueue)waitQueue).getList()){
@@ -76,7 +76,7 @@ public class Lock {
         }
         
         if ((lockHolder = waitQueue.nextThread()) != null){
-            temp.printAquireLock(lockHolder);
+            temp.printAquireLock(lockHolder, this);
             lockHolder.ready();
         }
         
