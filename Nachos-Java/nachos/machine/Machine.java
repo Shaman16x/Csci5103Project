@@ -112,9 +112,6 @@ public final class Machine {
         ((MultiLevelScheduler) ThreadedKernel.scheduler).printFinalStats();
     }
     */
-    if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa2.StaticPriorityScheduler")){     //TODO: make sure we need this
-        ((StaticPriorityScheduler) ThreadedKernel.scheduler).printFinalStats();
-    }
 	System.out.print("Machine halting!\n\n");   
 
 	stats.print();

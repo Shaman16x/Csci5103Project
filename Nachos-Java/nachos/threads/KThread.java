@@ -209,10 +209,6 @@ public class KThread {
             ((MultiLevelScheduler) ThreadedKernel.scheduler).printThreadStats(toBeDestroyed);
         }
         */
-        
-        if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa2.StaticPriorityScheduler")){      // TODO: check if this is still needed
-        ((StaticPriorityScheduler) ThreadedKernel.scheduler).printThreadStats(toBeDestroyed);
-        }
         sleep();
     }
 
