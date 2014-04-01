@@ -28,8 +28,6 @@ public class Lock {
         numLocks++;
     }
     
-    
-
     /**
      * Atomically acquire this lock. The current thread must not already hold
      * this lock.
@@ -39,6 +37,7 @@ public class Lock {
         int p;
         boolean intStatus = Machine.interrupt().disable();
         KThread thread = KThread.currentThread();
+        temp.printTryLock(thread);
         if (lockHolder != null) {
             if((p = temp.getPriority(thread)) < highestPriority)
                 highestPriority = p;
@@ -49,9 +48,10 @@ public class Lock {
         else {
             waitQueue.acquire(thread);
             lockHolder = thread;
+            temp.printAquireLock(lockHolder);
             highestPriority = temp.getPriority(thread);
             temp.addLock(thread,this);
-    }
+        }
 
         Lib.assertTrue(lockHolder == thread);
 
@@ -66,8 +66,11 @@ public class Lock {
 
         boolean intStatus = Machine.interrupt().disable();
         KThread thread = lockHolder;
-        if ((lockHolder = waitQueue.nextThread()) != null)
+        temp.printReleaseLock(lockHolder);
+        if ((lockHolder = waitQueue.nextThread()) != null){
+            temp.printAquireLock(lockHolder);
             lockHolder.ready();
+        }
         temp.removeLock(thread, this);
         Machine.interrupt().restore(intStatus);
     }
