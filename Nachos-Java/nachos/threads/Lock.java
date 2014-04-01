@@ -67,10 +67,19 @@ public class Lock {
         boolean intStatus = Machine.interrupt().disable();
         KThread thread = lockHolder;
         temp.printReleaseLock(lockHolder);
+        
+        highestPriority = temp.getMaxPriorityValue();
+        for(KThread t:((LockScheduler.FifoQueue)waitQueue).getList()){
+            int p;
+            if((p = temp.getThreadState(t).getPriority()) < highestPriority)
+                highestPriority = p;
+        }
+        
         if ((lockHolder = waitQueue.nextThread()) != null){
             temp.printAquireLock(lockHolder);
             lockHolder.ready();
         }
+        
         temp.removeLock(thread, this);
         Machine.interrupt().restore(intStatus);
     }
