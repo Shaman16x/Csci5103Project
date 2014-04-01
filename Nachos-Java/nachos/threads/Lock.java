@@ -61,7 +61,7 @@ public class Lock {
         KThread thread = lockHolder;
         if ((lockHolder = waitQueue.nextThread()) != null)
             lockHolder.ready();
-        temp.removeLock(thread);
+        temp.removeLock(thread, this);
         Machine.interrupt().restore(intStatus);
     }
 
