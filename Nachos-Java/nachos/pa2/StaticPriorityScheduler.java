@@ -35,8 +35,8 @@ public class StaticPriorityScheduler extends Scheduler{
         resetDonatedPriority(thread);
         int newDonationValue = getPriority(thread);
         for(Lock lock:s.getHeldLocks())
-            if(lock.highestPriority < newDonationValue)
-                newDonationValue = lock.highestPriority;
+            if(lock.getHighestPriority() < newDonationValue)
+                newDonationValue = lock.getHighestPriority();
         s.setDonatedPriority(newDonationValue);
         donate(thread, s.getWaitingLock().getLockHolder(), s.getWaitingLock(), false);
     }
@@ -57,8 +57,10 @@ public class StaticPriorityScheduler extends Scheduler{
             s.setDonatedPriority(getPriority(from));
             
             // this donates the priority of FROM to the threads that TO is waitng for
-            if((Lock lock = s.getWaitingLock()) != null){
-                if((KThread newTo = lock.getLockHolder()) != null){
+            Lock lock;
+            if((lock = s.getWaitingLock()) != null){
+                KThread newTo;
+                if((newTo = lock.getLockHolder()) != null){
                     donate(from, newTo, lock, false);
                 }
             }
