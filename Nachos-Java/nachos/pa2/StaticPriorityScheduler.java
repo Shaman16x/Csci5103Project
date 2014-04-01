@@ -87,23 +87,36 @@ public class StaticPriorityScheduler extends Scheduler{
     
     // prints stats about the scheduled thread
     // param ThreadState thread: the thread state to be printed
-    public void printScheduledThread(ThreadState thread){
+    public void printScheduledThread(ThreadState ts){
         String db = "";
+        KThread thread = ts.thread;
         if(Config.getString("printDebug") != null)      // debug output
-            db = thread.getThread().getName() + ":";
-        System.out.println("S," + getSchedulerTime() + "," + db + thread.getThread().getID()+ "," + thread.getPriority());
+            db = thread.getName() + ":";
+        System.out.println("S," + getSchedulerTime() + "," + db + thread.getID()+ "," + ts.getPriority());
     }
 
-    public void printTryLock(KThread thread){
-        System.out.println("W," + "L" + "," + "Trying Lock");
+    public void printTryLock(KThread thread, Lock l){
+        String db = "";
+        ThreadState ts = getThreadState(thread);
+        if(Config.getString("printDebug") != null)      // debug output
+            db = thread.getName() + ":";
+        System.out.println("W," + l + "," + getSchedulerTime() + "," + db + thread.getID()+ "," + ts.getPriority());
     }
     
-    public void printAquireLock(KThread thread){
-        System.out.println("A," + "L" + "," + "Aquired Lock");
+    public void printAquireLock(KThread thread, Lock l){
+        String db = "";
+        ThreadState ts = getThreadState(thread);
+        if(Config.getString("printDebug") != null)      // debug output
+            db = thread.getName() + ":";
+        System.out.println("W," + l + "," + getSchedulerTime() + "," + db + thread.getID()+ "," + ts.getPriority());
     }
     
-    public void printReleaseLock(KThread thread){
-        System.out.println("R," + "L" + "," + "Released Lock");
+    public void printReleaseLock(KThread thread, Lock l){
+        String db = "";
+        ThreadState ts = getThreadState(thread);
+        if(Config.getString("printDebug") != null)      // debug output
+            db = thread.getName() + ":";
+        System.out.println("W," + l + "," + getSchedulerTime() + "," + db + thread.getID()+ "," + ts.getPriority());
     }
 
     /* These are unneeded print functions
