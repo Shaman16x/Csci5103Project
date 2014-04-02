@@ -51,18 +51,14 @@ public class StaticPriorityScheduler extends Scheduler{
     //         l: lock held by thread to
     //         setWaiting: flag to set the waiting lock of a thread
     public void donate(KThread from, KThread to, Lock l, boolean setWaiting){
-        System.out.println("Donating Priority");
         if(from == null || to == null)
             return;
         
         if(setWaiting)
             getThreadState(from).setWaitingLock(l);
         
-        System.out.println("From: " + l.getHighestPriority() + " To: " + getThreadState(to).getPriority());
-        
         // copy over max donated priority
         if(l.getHighestPriority() < getThreadState(to).getPriority()){
-            System.out.println("Donating priority");
             ThreadState s = getThreadState(to);
             s.setDonatedPriority(l.getHighestPriority());
             

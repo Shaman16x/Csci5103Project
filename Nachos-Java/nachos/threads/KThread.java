@@ -433,28 +433,28 @@ public class KThread {
             
             // Create a low priority Lock holder
             Machine.interrupt().disable();
-            thread = new KThread(new LockTest("Low  Thread", 4, 50, l1, null));
+            thread = new KThread(new LockTest("Low  Thread", 4, 2 * 5, l1, null));
             ThreadedKernel.scheduler.setPriority(thread, 1);
             Machine.interrupt().enable();
             thread.setName("Low Thread").fork();
             
             // Create a middle priority Lock holder
             Machine.interrupt().disable();
-            thread = new KThread(new LockTest("Mid  Thread", 3,  20, l2, l1));
+            thread = new KThread(new LockTest("Mid  Thread", 3,  2 * 5, l2, l1));
             ThreadedKernel.scheduler.setPriority(thread, 1);
             Machine.interrupt().enable();
             thread.setName("Middle Thread").fork();
             
             // Create a high priority Lock holder
             Machine.interrupt().disable();
-            thread = new KThread(new LockTest("High Thread", 2, 20, l2, null));
+            thread = new KThread(new LockTest("High Thread", 2, 2 * 5, l2, null));
             ThreadedKernel.scheduler.setPriority(thread, 1);
             Machine.interrupt().enable();
             thread.setName("High Thread").fork();
             
             // Create a high priority Lock holder
             Machine.interrupt().disable();
-            thread = new KThread(new LockTest("High2 Thread", 2, 20, l2, null));
+            thread = new KThread(new LockTest("High2 Thread", 2, 2 * 5, l2, null));
             ThreadedKernel.scheduler.setPriority(thread, 1);
             Machine.interrupt().enable();
             thread.setName("High2 Thread").fork();
