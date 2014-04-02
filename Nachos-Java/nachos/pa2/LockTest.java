@@ -2,6 +2,7 @@ package nachos.pa2;
 
 import nachos.threads.*;
 import nachos.machine.Machine;
+
 // Testing program for pa2
 // When executed this program:
 // sets its priority to the correct value
@@ -14,10 +15,11 @@ import nachos.machine.Machine;
 // that the thread will immediately set its own priority
 
 public class LockTest implements Runnable {
-    public LockTest(String name, int priority, int time, Lock lock) {
+    public LockTest(String name, int priority, int time, Lock lock1, Lock lock2) {
         this.time = time;
         this.name = name;
-        this.lock = lock;
+        this.lock1 = lock1;
+        this.lock2 = lock2;
         this.priority = priority;
     }
 
@@ -28,9 +30,13 @@ public class LockTest implements Runnable {
         // Make sure threadState exists
         ThreadQueue waitQueue =	ThreadedKernel.scheduler.newThreadQueue(true);
         waitQueue.waitForAccess(KThread.currentThread());
-        if(lock != null)
-            lock.acquire();
+        if(lock1 != null)
+            lock1.acquire();
+        if(lock2 != null)
+            lock2.acquire();
         Machine.interrupt().enable();
+
+        KThread.currentThread().yield();
 
         for (int i=0; i<time; i++) {
             waitMS();
@@ -42,8 +48,10 @@ public class LockTest implements Runnable {
             KThread.currentThread().yield();
         }
         System.out.println("*** " + name + " has finished");
-        if(lock != null)
-            lock.release();
+        if(lock2 != null)
+            lock2.release();
+        if(lock1 != null)
+            lock1.release();
     }
 
     // wait for 1ms
@@ -57,5 +65,7 @@ public class LockTest implements Runnable {
     private int count = 0;
     private int priority;
     private int time;
-    private Lock lock;
+    private Integer share;
+    private Lock lock1;
+    private Lock lock2;
 }

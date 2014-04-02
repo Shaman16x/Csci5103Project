@@ -421,60 +421,6 @@ public class KThread {
     // run tests for PA1 if runTests is set to something
     if(Config.getString("runTests") != null){
         int num= Integer.parseInt(Config.getString("Kernel.numThreads"));
-        
-        // Create tests for Static Priority
-        /*
-        if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.StaticPriorityScheduler")){
-            for(int i=0; i<num; i++){
-                KThread thread = new KThread(new DelayTest(i, 10));
-                Machine.interrupt().disable();
-                ThreadedKernel.scheduler.setPriority(thread,7-i);
-                Machine.interrupt().enable();
-                thread.setName("SP thread").fork();
-            }
-                // create a thread with equal priority to a previous thread
-                KThread thread = new KThread(new DelayTest(3, 10));
-                Machine.interrupt().disable();
-                ThreadedKernel.scheduler.setPriority(thread,6);
-                Machine.interrupt().enable();
-                thread.setName("SP thread").fork();
-        }
-        
-        // Create tests for Dynamic Priority
-        else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.DynamicPriorityScheduler")){
-            //Check that a running thread will be lower in priority
-            Machine.interrupt().disable();
-            KThread thread = new KThread(new DelayTest(0, 50));
-            ThreadedKernel.scheduler.setPriority(thread, 0);
-            Machine.interrupt().enable();
-            thread.setName("DP HP thread").fork();
-            
-            //Check that a waiting thread will be higher in priority
-            Machine.interrupt().disable();
-            thread = new KThread(new DelayTest(1, 20));
-            ThreadedKernel.scheduler.setPriority(thread, 10);
-            Machine.interrupt().enable();
-            thread.setName("DP LP thread").fork();
-        }
-        
-        // Create tests for MultiLevel
-        else if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa1.MultiLevelScheduler")){
-            //Check that a running thread will be lower in priority
-            Machine.interrupt().disable();
-            KThread thread = new KThread(new DelayTest(0, 50));
-            ThreadedKernel.scheduler.setPriority(thread, 0);
-            Machine.interrupt().enable();
-            thread.setName("DP HP thread").fork();
-            
-            //Check that a waiting thread will be higher in priority
-            Machine.interrupt().disable();
-            thread = new KThread(new DelayTest(1, 20));
-            ThreadedKernel.scheduler.setPriority(thread, 23);
-            Machine.interrupt().enable();
-            thread.setName("DP LP thread").fork();
-        }
-        else
-        */
 
         if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa2.StaticPriorityScheduler")){
             System.out.println("PA2 tests are a WIP!!!");      // TODO: implement tests correctly
@@ -487,24 +433,31 @@ public class KThread {
             
             // Create a low priority Lock holder
             Machine.interrupt().disable();
-            thread = new KThread(new LockTest("Low  Thread", 4, 50, l1));
+            thread = new KThread(new LockTest("Low  Thread", 4, 50, l1, null));
             ThreadedKernel.scheduler.setPriority(thread, 1);
             Machine.interrupt().enable();
-            thread.setName("Lock LP Thread").fork();
+            thread.setName("Low Thread").fork();
             
             // Create a middle priority Lock holder
             Machine.interrupt().disable();
-            thread = new KThread(new LockTest("Mid  Thread", 3,  20, l1));
+            thread = new KThread(new LockTest("Mid  Thread", 3,  20, l2, l1));
             ThreadedKernel.scheduler.setPriority(thread, 1);
             Machine.interrupt().enable();
-            thread.setName("Lock MP Thread").fork();
+            thread.setName("Middle Thread").fork();
             
             // Create a high priority Lock holder
             Machine.interrupt().disable();
-            thread = new KThread(new LockTest("High Thread", 2, 20, l1));
+            thread = new KThread(new LockTest("High Thread", 2, 20, l2, null));
             ThreadedKernel.scheduler.setPriority(thread, 1);
             Machine.interrupt().enable();
-            thread.setName("Lock HP Thread").fork();
+            thread.setName("High Thread").fork();
+            
+            // Create a high priority Lock holder
+            Machine.interrupt().disable();
+            thread = new KThread(new LockTest("High2 Thread", 2, 20, l2, null));
+            ThreadedKernel.scheduler.setPriority(thread, 1);
+            Machine.interrupt().enable();
+            thread.setName("High2 Thread").fork();
             
         }
         else

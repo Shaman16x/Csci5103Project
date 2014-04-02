@@ -2,6 +2,7 @@ package nachos.pa2;
 
 import java.util.*;
 import nachos.threads.*;
+import nachos.machine.Config;
 
 /*
  * ThreadState is a container used to hold a thread, an associated
@@ -28,6 +29,8 @@ public class ThreadState {
     protected Lock waitingLock;
     protected LinkedList<Lock> heldLocks = new LinkedList<Lock>();
     
+    static protected boolean useDonation = false;
+    
     public void setWaitingLock(Lock l){
         waitingLock = l;
     }
@@ -44,8 +47,12 @@ public class ThreadState {
     public void removeLock(Lock l){
         heldLocks.remove(l);
         
-        if(heldLocks.size() == 0)
-            setDonatedPriority(priority);
+        // reset the donated priority to max of held lock or initial priority
+        donatedPriority = priority;
+        for(Lock m: heldLocks){
+            if(m.getHighestPriority() < donatedPriority)
+                donatedPriority = m.getHighestPriority();
+        }
     }
     
     public LinkedList<Lock> getHeldLocks(){
@@ -66,6 +73,11 @@ public class ThreadState {
     public ThreadState(KThread thread) {
         this.thread = thread;
         setPriority(maxPriorityValue);
+        
+        // determine if donation priority should be used
+        if(Config.getString("Locks.usePriorityDonation") != null)
+            if(Config.getBoolean("Locks.usePriorityDonation"))
+                useDonation = true;
     }
 
     // Perfered constructor call for ThreadState
@@ -74,8 +86,12 @@ public class ThreadState {
         setPriority(priority);
         maxPriorityValue = maxP;
         agingTime = a;
+        
+        // determine if donation priority should be used
+        if(Config.getString("Locks.usePriorityDonation") != null)
+            if(Config.getBoolean("Locks.usePriorityDonation"))
+                useDonation = true;
     }
-    
     // set the time that the thread was first scheduled
     public void setStartTime(int time){
         startTime = time;
@@ -87,7 +103,10 @@ public class ThreadState {
      * @return	the priority of the associated thread.
      */
     public int getPriority() {
-        return donatedPriority;
+        if(useDonation)
+            return donatedPriority;
+        else
+            return priority;
     }
 
     // gets the accossiated thread
@@ -139,7 +158,10 @@ public class ThreadState {
     }
     
     public int getDonatedPriority(){
-        return donatedPriority;
+        if(useDonation)
+            return donatedPriority;
+        else
+            return priority;
     }
     
     public String toString() {

@@ -51,22 +51,28 @@ public class StaticPriorityScheduler extends Scheduler{
     //         l: lock held by thread to
     //         setWaiting: flag to set the waiting lock of a thread
     public void donate(KThread from, KThread to, Lock l, boolean setWaiting){
+        System.out.println("Donating Priority");
         if(from == null || to == null)
             return;
         
         if(setWaiting)
             getThreadState(from).setWaitingLock(l);
-            
-        if(getPriority(from) < getThreadState(to).getPriority()){
+        
+        System.out.println("From: " + l.getHighestPriority() + " To: " + getThreadState(to).getPriority());
+        
+        // copy over max donated priority
+        if(l.getHighestPriority() < getThreadState(to).getPriority()){
+            System.out.println("Donating priority");
             ThreadState s = getThreadState(to);
-            s.setDonatedPriority(getPriority(from));
+            s.setDonatedPriority(l.getHighestPriority());
             
             // this donates the priority of FROM to the threads that TO is waitng for
             Lock lock;
             if((lock = s.getWaitingLock()) != null){
                 KThread newTo;
                 if((newTo = lock.getLockHolder()) != null){
-                    donate(from, newTo, lock, false);
+                    lock.updateHighestPriority();  // update's lock's highest priority value
+                    donate(from, newTo, lock, false); // donate value to newTo
                 }
             }
         }
@@ -95,8 +101,10 @@ public class StaticPriorityScheduler extends Scheduler{
     public void printScheduledThread(ThreadState ts){
         String db = "";
         KThread thread = ts.thread;
-        if(Config.getString("printDebug") != null)      // debug output
+        if(Config.getString("printDebug") != null){      // debug output
             db = thread.getName() + ":";
+            if(db.equals("main:") || db.equals("ping:")) return;
+        }
         System.out.println("S," + getSchedulerTime() + "," + db + thread.getID()+ "," + ts.getPriority());
     }
 
@@ -106,6 +114,7 @@ public class StaticPriorityScheduler extends Scheduler{
         ThreadState ts = getThreadState(thread);
         if(Config.getString("printDebug") != null)      // debug output
             db = thread.getName() + ":";
+            if(db.equals("main:") || db.equals("ping:")) return;
         System.out.println("W," + l + "," + getSchedulerTime() + "," + db + thread.getID()+ "," + ts.getPriority());
     }
     
@@ -114,7 +123,8 @@ public class StaticPriorityScheduler extends Scheduler{
         ThreadState ts = getThreadState(thread);
         if(Config.getString("printDebug") != null)      // debug output
             db = thread.getName() + ":";
-        System.out.println("W," + l + "," + getSchedulerTime() + "," + db + thread.getID()+ "," + ts.getPriority());
+            if(db.equals("main:") || db.equals("ping:")) return;
+        System.out.println("A," + l + "," + getSchedulerTime() + "," + db + thread.getID()+ "," + ts.getPriority());
     }
     
     public void printReleaseLock(KThread thread, Lock l){
@@ -122,70 +132,10 @@ public class StaticPriorityScheduler extends Scheduler{
         ThreadState ts = getThreadState(thread);
         if(Config.getString("printDebug") != null)      // debug output
             db = thread.getName() + ":";
-        System.out.println("W," + l + "," + getSchedulerTime() + "," + db + thread.getID()+ "," + ts.getPriority());
+            if(db.equals("main:") || db.equals("ping:")) return;
+        System.out.println("R," + l + "," + getSchedulerTime() + "," + db + thread.getID()+ "," + ts.getPriority());
     }
 
-    /* These are unneeded print functions
-     * 
-     * 
-    // prints the final stats of a thread that has executed
-    // param ThreadState thread: the thread state to be printed
-    public void printThreadStats(ThreadState thread){
-        updateThreads(null);    //
-        if(outfile != null){
-            try{
-            file = new FileWriter(outfile, true);
-            writer = new PrintWriter(file);
-            writer.println(thread.getStats());
-            writer.close();
-            }catch(IOException e){}
-        }
-        else
-            System.out.println(thread.getStats());
-    }
-    
-    // overloading of method above
-    public void printThreadStats(KThread thread){
-        printThreadStats(getThreadState(thread));
-    }
-
-    // Prints Final statistics of the scheduler
-    public void printFinalStats(){
-        if(outfile != null){
-            try{
-            file = new FileWriter(outfile, true);
-            writer = new PrintWriter(file);
-            writer.println("System," + getSystemStats());
-            writer.close();
-            }catch(IOException e){}
-        }
-        else
-            System.out.println("System," + getSystemStats());
-    }
-
-    // used by printFinalStats
-    public String getSystemStats(){
-        int turnaroundTime = 0;
-        int totalWaitTime = 0;
-        int maxWaitTime = 0;
-        int totalThreads = 0;
-        
-        // compute statistics over all threads that were scheduled
-        for(ThreadState s: states){
-            // div by 1000000 to convert ns to ms
-            if(s.waitTime/1000000 > maxWaitTime){
-                maxWaitTime = (int)(s.waitTime/1000000);
-            }
-            if(s.waitTime + s.runTime > 0){
-                turnaroundTime += (int) ((s.waitTime + s.runTime)/1000000);
-                totalThreads++;
-            }
-            totalWaitTime += (int) (s.waitTime/1000000);
-        }
-        
-        return totalThreads + "," + totalWaitTime/totalThreads + "," + maxWaitTime + "," + turnaroundTime/totalThreads;
-    }
-    */
     /**
      * Allocate a new scheduler.
      */

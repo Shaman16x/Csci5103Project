@@ -52,6 +52,14 @@ public class StaticPriorityQueue extends ThreadQueue{
             if(s.getPriority() < queue.get(i).getPriority())
                 break;
         queue.add(i,s);
+        
+        /*
+        System.out.print("In Queue: ");
+        for(ThreadState ts: queue){
+            System.out.print(ts.getThread().getName() + ", ");
+        }
+        System.out.println("");
+        */
     }
     
     public void setParentScheduler(StaticPriorityScheduler sch){
