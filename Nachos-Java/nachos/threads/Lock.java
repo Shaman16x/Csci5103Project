@@ -28,7 +28,7 @@ public class Lock {
         numLocks++;
         if(Config.getString("Locks.usePriorityDonation") != null && Config.getBoolean("Locks.usePriorityDonation"))
             useDonation = true;
-        if(Config.getString("ThreadedKernel.scheduler") == "nachos.pa2.StaticPriorityScheduler")
+        if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa2.StaticPriorityScheduler"))
             useSPS = true;
     }
     

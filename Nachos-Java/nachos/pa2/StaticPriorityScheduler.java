@@ -14,7 +14,7 @@ import java.io.*;
  */
 public class StaticPriorityScheduler extends Scheduler{
 
-	protected static ArrayList<ThreadState> states = new ArrayList<ThreadState>();
+	protected static LinkedList<ThreadState> states = new LinkedList<ThreadState>();
 
 	protected int maxPriorityValue = 10;                    // The max priority value for the queue
 	protected int minPriorityValue = 0;                     // The min priority value for the queue

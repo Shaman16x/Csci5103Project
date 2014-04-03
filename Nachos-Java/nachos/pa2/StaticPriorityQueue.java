@@ -14,7 +14,7 @@ import java.io.*;
 public class StaticPriorityQueue extends ThreadQueue{
 
     // list that keeps track of priorities
-    protected ArrayList<ThreadState> queue = new ArrayList<ThreadState>();
+    protected PriorityQueue<ThreadState> queue = new PriorityQueue<ThreadState>(10, new ThreadStateComparator());
     protected StaticPriorityScheduler parentScheduler;
 
     /**
@@ -40,7 +40,6 @@ public class StaticPriorityQueue extends ThreadQueue{
      */
     public void waitForAccess(KThread thread){
         int i=0;
-        //parentScheduler.updateThreads(null);
         
         ThreadState s = parentScheduler.getThreadState(thread);
         if(s.status == ThreadState.QueueStatus.NOT_SCHEDULED){
@@ -48,18 +47,7 @@ public class StaticPriorityQueue extends ThreadQueue{
         }
         s.status = ThreadState.QueueStatus.INQUEUE;
         
-        for(i=0; i<queue.size(); i++)
-            if(s.getPriority() < queue.get(i).getPriority())
-                break;
-        queue.add(i,s);
-        
-        /*
-        System.out.print("In Queue: ");
-        for(ThreadState ts: queue){
-            System.out.print(ts.getThread().getName() + ", ");
-        }
-        System.out.println("");
-        */
+        queue.add(s);
     }
     
     public void setParentScheduler(StaticPriorityScheduler sch){
@@ -83,9 +71,8 @@ public class StaticPriorityQueue extends ThreadQueue{
         
         if(queue.isEmpty())
             return null;
-        ThreadState s = queue.remove(0);
+        ThreadState s = queue.poll();
         parentScheduler.printScheduledThread(s);
-        //parentScheduler.updateThreads(s.getThread());
         
         return s.getThread();
     }
@@ -104,9 +91,8 @@ public class StaticPriorityQueue extends ThreadQueue{
      * 			returned from <tt>nextThread()</tt>.
      */
     public void acquire(KThread thread) {
-        for(int i=0; i<queue.size(); i++)
-            if(thread.compareTo(queue.get(i).getThread()) == 0)
-                queue.remove(i);
+        ThreadState ts = parentScheduler.getThreadState(thread);
+        queue.remove(ts);
     }
 
     /**

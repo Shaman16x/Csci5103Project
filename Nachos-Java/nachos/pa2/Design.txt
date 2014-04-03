@@ -1,0 +1,75 @@
+Design Decisions
+-----------------------------------------------------------------------
+Jeremiah Thomas:4145047
+Kyle Michaels:3914066
+
+General Overview
+-----------------------------------------------------------------------
+The purpose of this project is to implement locks to avoid process inversion.
+This happens when a lower priority process owns a lock that a higher priority
+process needs. This is a problem because high priority executes but is always
+waiting for the lock so the system freezes.
+
+To solve this problem we modified Lock.java and StaticPriorityScheduler.java
+to implement donation.  Donation is the process in which a higher priority
+process donates its priority to a lower priority process if the higer is
+waiting for a lock that the lower owns.  This process also involves cascading
+donation which is seen in the following example.
+
+p0: owns L0 has priority 5
+p1: owns L1 has priority 3 waiting for L0
+p2: has priority 1 waiting for L1
+
+In this example p0 and p1 would have a donated priority of 1.
+
+Lock
+-----------------------------------------------------------------------
+The basic functionality if the lock is unchanged.
+Threads attempt to acquire locks and are put to sleep in a wait queue
+if the lock is owned.  The next thread is woken up only when the owner
+of the lock calls release.  We chose to preserve this funtionality as
+the locking mechanism because we were only asked to implement donation
+an not improve the already existing locking mechanism.
+
+LockScheduler
+-----------------------------------------------------------------------
+The LockScheduler uses first come first serve as describe in the 
+write-up.  To implement this we used a modified version of Round Robin
+Scheduler used in Nachos.  This Scheduler uses the built in FIFO Queue
+class.  When a Thread is put into waiting, the queue adds this Thread to 
+the end of the list.  When a lock is released, the lock is given to the
+first element in the queue and the element is removed.
+
+
+Data Structure:
+The FIFO Queue is used for the Lock wait queue.  This is a LinkList
+where elements are added to the end and removed from the front.
+This is effcient as both operation take O(1) time to execute since we know
+where the ends of the list are.
+
+
+StaticPriorityScheduler
+-----------------------------------------------------------------------
+The StaticPriorityScheduler is a modified version of the StaticPriorityScheduler
+used in PA1.  These modifications include 
+
+
+Data Structure:
+
+
+Modifications to Nachos
+-------------------------------------------------------------------------
+Kthread:
+	getID(): We created a getID() method so we could access the ID of a
+			 thread since its ID is private variable.
+
+	selfTest: We added our own tests to verify our schedulers.
+
+	finish: We added a call to the appropriate Scheduler print thread stats
+			method to log the statistics of the thread that finished as
+			described in the assignment write up.
+
+Machine:
+	halt: We added a call to the appropriate Scheduler print final stats
+		  method to log the final statistics of a Scheduler as described
+		  in the assignment write up.

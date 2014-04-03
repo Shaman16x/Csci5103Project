@@ -37,7 +37,7 @@ pa1 =		DynamicPriorityScheduler DynamicPriorityQueue \
 pa2 =       StaticPriorityScheduler StaticPriorityQueue \
             LockScheduler \
             LockTest \
-            ThreadState
+            ThreadState ThreadStateComparator
 
 ALLDIRS = machine security ag threads userprog vm network pa1 pa2
 
