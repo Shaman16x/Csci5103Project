@@ -47,7 +47,7 @@ public class StaticPriorityScheduler extends Scheduler{
     //    if from's donated priority is less than to's
     //    donated priority.
     // params: from: thread waiting
-    //         to: thread current;y holding lock l
+    //         to: thread currently holding lock l
     //         l: lock held by thread to
     //         setWaiting: flag to set the waiting lock of a thread
     public void donate(KThread from, KThread to, Lock l, boolean setWaiting){

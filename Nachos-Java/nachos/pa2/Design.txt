@@ -20,7 +20,8 @@ p0: owns L0 has priority 5
 p1: owns L1 has priority 3 waiting for L0
 p2: has priority 1 waiting for L1
 
-In this example p0 and p1 would have a donated priority of 1.
+In this example p0 and p1 would have a donated priority of 1.  Without cascading
+p0 would have donated priority of 3.
 
 Lock
 -----------------------------------------------------------------------
@@ -30,6 +31,14 @@ if the lock is owned.  The next thread is woken up only when the owner
 of the lock calls release.  We chose to preserve this funtionality as
 the locking mechanism because we were only asked to implement donation
 an not improve the already existing locking mechanism.
+
+We added the ability to use donation functions defined in StaticPriorityScheduler
+and the ability to use our own scheduler.  We also added a highestPriority
+value that represents the highest donated priority of the threads in that
+locks wait queue.  We also gave locks the ability to communicate with the
+StaticPriorityScheduler class with a default StaticPriorityScheduler
+object.  We also added a getLockHolder to allow the user to view the
+lockHolder.
 
 LockScheduler
 -----------------------------------------------------------------------
@@ -47,29 +56,45 @@ where elements are added to the end and removed from the front.
 This is effcient as both operation take O(1) time to execute since we know
 where the ends of the list are.
 
-
 StaticPriorityScheduler
 -----------------------------------------------------------------------
 The StaticPriorityScheduler is a modified version of the StaticPriorityScheduler
-used in PA1.  These modifications include 
-
+used in PA1.  These modifications include using a priority queue instead
+of an array list.  We also added functions to donate priorities from one
+state thread to another.  The donation function takes a from thread, a to
+thread, the lock the to thread owns and whether it needs to set the waitingLock
+of the from thread to the lock.  The waitingLock of the from thread is
+set to the lock given if the from thread is the one trying to aquire the
+lock that the to thread owns.  This method deals with cascading values by
+recursively passing the value up the tree until the to thread is not
+waiting to aquire a lock.  This method also only donates priority if the
+lock's highest priority value is higher than the to's donated priority.
 
 Data Structure:
 
+ThreadState
+-----------------------------------------------------------------------
+The thread state class maintains the information for a thread similar to PA1
+with some additions.  Thread states now maintain a donated priority value
+and uses a linked list to store all of the locks that thread owns.  It also
+has a waitingLock which is the Lock that the thread is trying to aquire if
+the thread is doing so and is null if the thread is not trying to aquire a
+lock.
+
+Data Structure:
+We used a linked list to implement the list of held locks.  This uses O(n)
+time because the locks have to be compared to find the proper one to delete.
+We could have used a hashmap to improve performance however because Locks
+have no easily hashable value and we do not have a decent hashing function
+this would not be worth the slightly improved performance.
 
 Modifications to Nachos
 -------------------------------------------------------------------------
+Lock:
+	as described above
+
 Kthread:
 	getID(): We created a getID() method so we could access the ID of a
 			 thread since its ID is private variable.
 
-	selfTest: We added our own tests to verify our schedulers.
-
-	finish: We added a call to the appropriate Scheduler print thread stats
-			method to log the statistics of the thread that finished as
-			described in the assignment write up.
-
-Machine:
-	halt: We added a call to the appropriate Scheduler print final stats
-		  method to log the final statistics of a Scheduler as described
-		  in the assignment write up.
+	selfTest: We added our own tests to verify our implementation.

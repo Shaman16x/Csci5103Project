@@ -28,8 +28,11 @@ public class Lock {
         numLocks++;
         if(Config.getString("Locks.usePriorityDonation") != null && Config.getBoolean("Locks.usePriorityDonation"))
             useDonation = true;
-        if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa2.StaticPriorityScheduler"))
+        if(Config.getString("ThreadedKernel.scheduler").equals("nachos.pa2.StaticPriorityScheduler")){
             useSPS = true;
+            temp = (StaticPriorityScheduler) ThreadedKernel.scheduler;
+            highestPriority = temp.getMaxPriorityValue();
+        }
     }
     
     /**
@@ -45,12 +48,12 @@ public class Lock {
             temp.printTryLock(thread, this);
         
         // check if highest priority can be changed
-        if((p = temp.getPriority(thread)) < highestPriority)
+        if(useSPS && (p = temp.getPriority(thread)) < highestPriority)
             highestPriority = p;
         
         // thread must wait
         if (lockHolder != null) {
-            if(useDonation)
+            if(useSPS && useDonation)
                 temp.donate(thread, lockHolder, this, true);
             waitQueue.waitForAccess(thread);
             KThread.sleep();
@@ -60,7 +63,7 @@ public class Lock {
             lockHolder = thread;
             if(useSPS)
                 temp.printAquireLock(lockHolder, this);
-            if(useDonation)
+            if(useDonation && useSPS)
                 temp.addLock(thread,this);
         }
 
@@ -84,7 +87,8 @@ public class Lock {
             updateHighestPriority();
         }
         if ((lockHolder = waitQueue.nextThread()) != null){
-            temp.printAquireLock(lockHolder, this);
+            if(useSPS)
+                temp.printAquireLock(lockHolder, this);
             lockHolder.ready();
         }
         
@@ -112,12 +116,14 @@ public class Lock {
     
     // determine the highest priority out of all waiting threads
     public void updateHighestPriority(){
-        highestPriority = temp.getMaxPriorityValue();
-        // reset the donation value
-        for(KThread t:((LockScheduler.FifoQueue)waitQueue).getList()){
-            int p;
-            if((p = temp.getThreadState(t).getPriority()) < highestPriority)
-                highestPriority = p;
+        if(useSPS && useDonation){
+            highestPriority = temp.getMaxPriorityValue();
+            // reset the donation value
+            for(KThread t:((LockScheduler.FifoQueue)waitQueue).getList()){
+                int p;
+                if((p = temp.getThreadState(t).getPriority()) < highestPriority)
+                    highestPriority = p;
+            }
         }
     }
     
@@ -125,9 +131,9 @@ public class Lock {
         return "L" + lockID;
     }
     
-    StaticPriorityScheduler temp = (StaticPriorityScheduler) ThreadedKernel.scheduler;
+    StaticPriorityScheduler temp;
     private KThread lockHolder = null;
-    protected int highestPriority = temp.getMaxPriorityValue();
+    protected int highestPriority;
     LockScheduler sched = new LockScheduler();          //this is fifo scheduler
     private ThreadQueue waitQueue =	sched.newThreadQueue(true);
     private int lockID;
