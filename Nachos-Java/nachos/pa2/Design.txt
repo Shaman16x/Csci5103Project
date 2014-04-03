@@ -7,8 +7,8 @@ General Overview
 -----------------------------------------------------------------------
 The purpose of this project is to implement locks to avoid process inversion.
 This happens when a lower priority process owns a lock that a higher priority
-process needs. This is a problem because high priority executes but is always
-waiting for the lock so the system freezes.
+process needs.  This is a problem because a mid priority process will execute
+before a low and by extension the high process because the high is waiting.
 
 To solve this problem we modified Lock.java and StaticPriorityScheduler.java
 to implement donation.  Donation is the process in which a higher priority

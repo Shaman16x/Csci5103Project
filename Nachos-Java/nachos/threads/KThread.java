@@ -432,34 +432,58 @@ public class KThread {
             if(l1 == null)
                 System.out.println("We've got a problem");
             
-            // Create a low priority Lock holder
-            Machine.interrupt().disable();
-            thread = new KThread(new LockTest("Low  Thread", 4, 10, l1, null));
-            ThreadedKernel.scheduler.setPriority(thread, 1);
-            Machine.interrupt().enable();
-            thread.setName("Low Thread").fork();
-            
-            // Create a middle priority Lock holder
-            Machine.interrupt().disable();
-            thread = new KThread(new LockTest("Mid  Thread", 3,  10, l2, l1));
-            ThreadedKernel.scheduler.setPriority(thread, 1);
-            Machine.interrupt().enable();
-            thread.setName("Middle Thread").fork();
-            
-            // Create a high priority Lock holder
-            Machine.interrupt().disable();
-            thread = new KThread(new LockTest("High Thread", 2, 10, l2, null));
-            ThreadedKernel.scheduler.setPriority(thread, 1);
-            Machine.interrupt().enable();
-            thread.setName("High Thread").fork();
-            
-            // Create a high priority Lock holder
-            Machine.interrupt().disable();
-            thread = new KThread(new LockTest("High2 Thread", 2, 10, l2, null));
-            ThreadedKernel.scheduler.setPriority(thread, 1);
-            Machine.interrupt().enable();
-            thread.setName("High2 Thread").fork();
-            
+            if(Config.getString("MutexTest") == null){
+                
+                // Create a low priority Lock holder
+                Machine.interrupt().disable();
+                thread = new KThread(new LockTest("Low  Thread", 4, 10, l1, null));
+                ThreadedKernel.scheduler.setPriority(thread, 1);
+                Machine.interrupt().enable();
+                thread.setName("Low Thread").fork();
+                
+                // Create a middle priority Lock holder
+                Machine.interrupt().disable();
+                thread = new KThread(new LockTest("Mid  Thread", 3,  10, l2, l1));
+                ThreadedKernel.scheduler.setPriority(thread, 1);
+                Machine.interrupt().enable();
+                thread.setName("Middle Thread").fork();
+                
+                // Create a middle priority Lock holder
+                Machine.interrupt().disable();
+                thread = new KThread(new LockTest("Mid2  Thread ", 3,  10, null, null));
+                ThreadedKernel.scheduler.setPriority(thread, 1);
+                Machine.interrupt().enable();
+                thread.setName("Middle2 Thread").fork();
+                
+                // Create a high priority Lock holder
+                Machine.interrupt().disable();
+                thread = new KThread(new LockTest("High Thread", 2, 10, l2, null));
+                ThreadedKernel.scheduler.setPriority(thread, 1);
+                Machine.interrupt().enable();
+                thread.setName("High Thread").fork();
+                
+                // Create a high priority Lock holder
+                Machine.interrupt().disable();
+                thread = new KThread(new LockTest("High2 Thread", 2, 10, l2, null));
+                ThreadedKernel.scheduler.setPriority(thread, 1);
+                Machine.interrupt().enable();
+                thread.setName("High2 Thread").fork();
+            }
+            else {
+                System.out.println("Running PA2 Mutex Test");
+                Machine.interrupt().disable();
+                thread = new KThread(new MutexTest(l1, 5));
+                ThreadedKernel.scheduler.setPriority(thread, 1);
+                Machine.interrupt().enable();
+                thread.setName("Counter1").fork();
+                
+                Machine.interrupt().disable();
+                thread = new KThread(new MutexTest(l1, 5));
+                ThreadedKernel.scheduler.setPriority(thread, 1);
+                Machine.interrupt().enable();
+                thread.setName("Counter2").fork();
+            }
+                
         }
         else
             System.out.println("you didn't run one of our schedulers");
