@@ -49,7 +49,6 @@ class.  When a Thread is put into waiting, the queue adds this Thread to
 the end of the list.  When a lock is released, the lock is given to the
 first element in the queue and the element is removed.
 
-
 Data Structure:
 The FIFO Queue is used for the Lock wait queue.  This is a LinkList
 where elements are added to the end and removed from the front.
@@ -61,16 +60,20 @@ StaticPriorityScheduler
 The StaticPriorityScheduler is a modified version of the StaticPriorityScheduler
 used in PA1.  These modifications include using a priority queue instead
 of an array list.  We also added functions to donate priorities from one
-state thread to another.  The donation function takes a from thread, a to
-thread, the lock the to thread owns and whether it needs to set the waitingLock
-of the from thread to the lock.  The waitingLock of the from thread is
-set to the lock given if the from thread is the one trying to aquire the
-lock that the to thread owns.  This method deals with cascading values by
-recursively passing the value up the tree until the to thread is not
-waiting to aquire a lock.  This method also only donates priority if the
-lock's highest priority value is higher than the to's donated priority.
+state thread to another. We also added 
+
+The donation function takes a from thread, a to thread, the lock the to
+thread owns and whether it needs to set the waitingLock of the from thread
+to the lock.  The waitingLock of the from thread is set to the lock given
+if the to thread is the owner of the lock.  This method deals with cascading
+values by recursively passing the value up the tree until the to thread is
+not waiting to aquire a lock.  This method also only donates priority if
+the lock's highest priority value is higher than the to's donated priority.
 
 Data Structure:
+We used a priority queue to implement the wait queue because it is the most
+efficient with ease of implementation.  This uses O(lg n) and uses a
+comparator that we created that compares ThreadStates.
 
 ThreadState
 -----------------------------------------------------------------------

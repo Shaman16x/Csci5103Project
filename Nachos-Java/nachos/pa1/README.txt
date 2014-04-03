@@ -83,12 +83,3 @@ running nor are they waiting.
 This causes the end time for these threads to be less than the current time.
 This is because the end time is calculated as the start time plus the wait and run
 time.
-
-
-
-
-
-
-
-
-
