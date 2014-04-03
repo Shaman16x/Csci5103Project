@@ -97,7 +97,7 @@ public class StaticPriorityScheduler extends Scheduler{
     public void printScheduledThread(ThreadState ts){
         String db = "";
         KThread thread = ts.thread;
-        if(Config.getString("printDebug") != null){      // debug output
+        if(Config.getString("printDebug") != null && Config.getBoolean("printDebug")){      // debug output
             db = thread.getName() + ":";
             if(db.equals("main:") || db.equals("ping:")) return;
         }
@@ -108,7 +108,7 @@ public class StaticPriorityScheduler extends Scheduler{
         if (thread == null) return;
         String db = "";
         ThreadState ts = getThreadState(thread);
-        if(Config.getString("printDebug") != null)      // debug output
+        if(Config.getString("printDebug") != null && Config.getBoolean("printDebug"))      // debug output
             db = thread.getName() + ":";
             if(db.equals("main:") || db.equals("ping:")) return;
         System.out.println("W," + l + "," + getSchedulerTime() + "," + db + thread.getID()+ "," + ts.getPriority());
@@ -117,7 +117,7 @@ public class StaticPriorityScheduler extends Scheduler{
     public void printAquireLock(KThread thread, Lock l){
         String db = "";
         ThreadState ts = getThreadState(thread);
-        if(Config.getString("printDebug") != null)      // debug output
+        if(Config.getString("printDebug") != null && Config.getBoolean("printDebug"))      // debug output
             db = thread.getName() + ":";
             if(db.equals("main:") || db.equals("ping:")) return;
         System.out.println("A," + l + "," + getSchedulerTime() + "," + db + thread.getID()+ "," + ts.getPriority());
@@ -126,7 +126,7 @@ public class StaticPriorityScheduler extends Scheduler{
     public void printReleaseLock(KThread thread, Lock l){
         String db = "";
         ThreadState ts = getThreadState(thread);
-        if(Config.getString("printDebug") != null)      // debug output
+        if(Config.getString("printDebug") != null && Config.getBoolean("printDebug"))      // debug output
             db = thread.getName() + ":";
             if(db.equals("main:") || db.equals("ping:")) return;
         System.out.println("R," + l + "," + getSchedulerTime() + "," + db + thread.getID()+ "," + ts.getPriority());
