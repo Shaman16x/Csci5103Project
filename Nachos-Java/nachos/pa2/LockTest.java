@@ -40,14 +40,17 @@ public class LockTest implements Runnable {
 
         for (int i=0; i<time; i++) {
             waitMS();
+        
+            if(lock1 != null)
+                sharedTotal++;
             
-            if(i%5 == 0)   {
-                System.out.println("*** " + name + " waited "
-                       + i + " ms");
+            if(lock1 != null && i%5 == 0)   {
+                System.out.println("Shared total is at " + sharedTotal);
             }
             KThread.currentThread().yield();
         }
-        System.out.println("*** " + name + " has finished");
+        if(lock1 != null);
+            System.out.println("Shared total is at " + sharedTotal);
         if(lock2 != null)
             lock2.release();
         if(lock1 != null)
@@ -65,7 +68,7 @@ public class LockTest implements Runnable {
     private int count = 0;
     private int priority;
     private int time;
-    private Integer share;
     private Lock lock1;
     private Lock lock2;
+    static private int sharedTotal = 0;
 }
