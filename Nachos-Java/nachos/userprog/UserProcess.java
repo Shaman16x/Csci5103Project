@@ -23,10 +23,17 @@ public class UserProcess {
      * Allocate a new process.
      */
     public UserProcess() {
-	int numPhysPages = Machine.processor().getNumPhysPages();
-	pageTable = new TranslationEntry[numPhysPages];
-	for (int i=0; i<numPhysPages; i++)
-	    pageTable[i] = new TranslationEntry(i,i, true,false,false,false);
+        // TODO: should this be put into 
+        if(Config.getString("Processor.pageSize")!= null) {
+            pageSize = Config.getInteger("Processor.pageSize");
+        }
+        else {
+            pageSize = Processor.pageSize;
+        }
+        int numPhysPages = Machine.processor().getNumPhysPages();
+        pageTable = new TranslationEntry[numPhysPages];
+        for (int i=0; i<numPhysPages; i++)
+            pageTable[i] = new TranslationEntry(i,i, true,false,false,false);
     }
     
     /**
@@ -51,7 +58,7 @@ public class UserProcess {
     public boolean execute(String name, String[] args) {
 	if (!load(name, args))
 	    return false;
-	
+	this.name = name;
 	new UThread(this).setName(name).fork();
 
 	return true;
@@ -391,8 +398,10 @@ public class UserProcess {
 	switch (syscall) {
 	case syscallHalt:
 	    return handleHalt();
-
-
+    case syscallExit:
+        System.out.println("Exiting program.");
+        System.out.println(name + "," + "exit" + "," + KThread.currentThread().getID() + a0);
+        // TODO: determine how to "exit" a program
 	default:
 	    Lib.debug(dbgProcess, "Unknown syscall " + syscall);
 	    Lib.assertNotReached("Unknown system call!");
@@ -444,6 +453,8 @@ public class UserProcess {
     private int initialPC, initialSP;
     private int argc, argv;
 	
-    private static final int pageSize = Processor.pageSize;
+    private final int pageSize;
     private static final char dbgProcess = 'a';
+    
+    private String name = "No Program";
 }
