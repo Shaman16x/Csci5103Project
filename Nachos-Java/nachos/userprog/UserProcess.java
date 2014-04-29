@@ -388,18 +388,18 @@ public class UserProcess {
      * @return	the value to be returned to the user.
      */
     public int handleSyscall(int syscall, int a0, int a1, int a2, int a3) {
-	switch (syscall) {
-	case syscallHalt:
-	    return handleHalt();
-    case syscallExit:
-        System.out.println("Exiting program.");
-        System.out.println(name + "," + "exit" + "," + KThread.currentThread().getID() + a0);
-        // TODO: determine how to "exit" a program
-	default:
-	    Lib.debug(dbgProcess, "Unknown syscall " + syscall);
-	    Lib.assertNotReached("Unknown system call!");
-	}
-	return 0;
+        switch (syscall) {
+        case syscallHalt:
+            return handleHalt();
+        case syscallExit:
+            System.out.println("Exiting program.");
+            System.out.println(name + "," + "exit" + "," + KThread.currentThread().getID() + a0);
+            // TODO: determine how to "exit" a program
+        default:
+            Lib.debug(dbgProcess, "Unknown syscall " + syscall);
+            Lib.assertNotReached("Unknown system call!");
+        }
+        return 0;
     }
 
     /**

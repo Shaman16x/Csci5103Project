@@ -91,21 +91,22 @@ public class UserKernel extends ThreadedKernel {
      * @see	nachos.machine.Machine#getShellProgramName
      */
     public void run() {
-	super.run();
+        super.run();
 
-	UserProcess process = UserProcess.newUserProcess();
-	
-	List<String> shellProgram = Machine.getShellProgramNames();	
-	Lib.assertTrue(process.execute(shellProgram.get(0), new String[] { }));
+        UserProcess process = UserProcess.newUserProcess();
+        
+        List<String> shellProgram = Machine.getShellProgramNames();	
+        for(String s: shellProgram)
+            Lib.assertTrue(process.execute(s, new String[] { }));
 
-	KThread.currentThread().finish();
-    }
+        KThread.currentThread().finish();
+        }
 
-    /**
-     * Terminate this kernel. Never returns.
-     */
-    public void terminate() {
-	super.terminate();
+        /**
+         * Terminate this kernel. Never returns.
+         */
+        public void terminate() {
+        super.terminate();
     }
 
     /** Globally accessible reference to the synchronized console. */

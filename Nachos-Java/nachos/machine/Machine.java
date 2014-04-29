@@ -406,7 +406,13 @@ public final class Machine {
         List<String> nameList = new LinkedList<String>();
         String arg = Config.getString("Kernel.shellPrograms");
         if(arg != null){
-            // TODO: fillout 
+            int colon = arg.indexOf(":");
+            int count = Integer.parseInt(arg.substring(0, colon));
+            String[] names = arg.substring(colon+1).split(",");
+            for(String name: names){
+                for(int i = 0; i < count; i++)
+                    nameList.add(name);
+            }
         }
         else{
             nameList.add(getShellProgramName());
