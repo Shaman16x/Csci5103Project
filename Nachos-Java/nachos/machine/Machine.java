@@ -11,6 +11,8 @@ import nachos.threads.ThreadedKernel;
 import nachos.pa2.StaticPriorityScheduler;
 
 import java.io.File;
+import java.util.List;
+import java.util.LinkedList;
 
 /**
  * The master class of the simulated machine. Processes command line arguments,
@@ -393,6 +395,23 @@ public final class Machine {
 
 	Lib.assertTrue(shellProgramName != null);
 	return shellProgramName;
+    }
+    
+    /**
+     * 
+     * Return a list of shell programs to run
+     * 
+     */
+    public static List<String> getShellProgramNames() {
+        List<String> nameList = new LinkedList<String>();
+        String arg = Config.getString("Kernel.shellPrograms");
+        if(arg != null){
+            // TODO: fillout 
+        }
+        else{
+            nameList.add(getShellProgramName());
+        }
+        return nameList;
     }
 
     private static String shellProgramName = null;
