@@ -29,32 +29,44 @@ public final class Processor {
      *				attach.
      */
     public Processor(Privilege privilege, int numPhysPages) {
-	System.out.print(" processor");
+        System.out.print(" processor");
 
-	this.privilege = privilege;
-	privilege.processor = new ProcessorPrivilege();
+        // Sets the pagesize
+        if(Config.getString("Processor.pageSize")!= null) {
+            pageSize = Config.getInteger("Processor.pageSize");
+        }
+        else {
+            // default pagesize
+            pageSize = 0x400;
+        }
+        maxPages = (int) (0x100000000L / pageSize);
 
-	Class clsKernel = Lib.loadClass(Config.getString("Kernel.kernel"));
-	Class clsVMKernel = Lib.tryLoadClass("nachos.vm.VMKernel");
+        this.privilege = privilege;
+        privilege.processor = new ProcessorPrivilege();
 
-	usingTLB =
-	    (clsVMKernel != null && clsVMKernel.isAssignableFrom(clsKernel));
-	
-	this.numPhysPages = numPhysPages;
+        Class clsKernel = Lib.loadClass(Config.getString("Kernel.kernel"));
+        Class clsVMKernel = Lib.tryLoadClass("nachos.vm.VMKernel");
 
-	for (int i=0; i<numUserRegisters; i++)
-	    registers[i] = 0;
+        usingTLB =
+            (clsVMKernel != null && clsVMKernel.isAssignableFrom(clsKernel));
+        
+        this.numPhysPages = numPhysPages;
 
-	mainMemory = new byte[pageSize * numPhysPages];
+        for (int i=0; i<numUserRegisters; i++)
+            registers[i] = 0;
 
-	if (usingTLB) {
-	    translations = new TranslationEntry[tlbSize];
-	    for (int i=0; i<tlbSize; i++)
-		translations[i] = new TranslationEntry();
-	}
-	else {
-	    translations = null;
-	}
+        mainMemory = new byte[pageSize * numPhysPages];
+
+        if (usingTLB) {
+            translations = new TranslationEntry[tlbSize];
+            for (int i=0; i<tlbSize; i++)
+            translations[i] = new TranslationEntry();
+        }
+        else {
+            translations = null;
+        }
+        
+
     }
 
     /**
@@ -548,9 +560,9 @@ public final class Processor {
     private TranslationEntry[] translations;
 
     /** Size of a page, in bytes. */
-    public static final int pageSize = 0x400;
+    public static int pageSize; // = 0x400;
     /** Number of pages in a 32-bit address space. */
-    public static final int maxPages = (int) (0x100000000L / pageSize);
+    public static int maxPages; // = (int) (0x100000000L / pageSize);
     /** Number of physical pages in memory. */
     private int numPhysPages;
     /** Main memory for user programs. */

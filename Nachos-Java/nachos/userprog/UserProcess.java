@@ -23,13 +23,6 @@ public class UserProcess {
      * Allocate a new process.
      */
     public UserProcess() {
-        // TODO: should this be put into 
-        if(Config.getString("Processor.pageSize")!= null) {
-            pageSize = Config.getInteger("Processor.pageSize");
-        }
-        else {
-            pageSize = Processor.pageSize;
-        }
         int numPhysPages = Machine.processor().getNumPhysPages();
         pageTable = new TranslationEntry[numPhysPages];
         for (int i=0; i<numPhysPages; i++)
@@ -453,7 +446,7 @@ public class UserProcess {
     private int initialPC, initialSP;
     private int argc, argv;
 	
-    private final int pageSize;
+    private static final int pageSize = Processor.pageSize;
     private static final char dbgProcess = 'a';
     
     private String name = "No Program";
