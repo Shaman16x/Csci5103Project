@@ -39,7 +39,9 @@ pa2 =       StaticPriorityScheduler StaticPriorityQueue \
             LockTest MutexTest \
             ThreadState ThreadStateComparator
 
-ALLDIRS = machine security ag threads userprog vm network pa1 pa2
+pa3 =       MemoryAllocator Frame
+
+ALLDIRS = machine security ag threads userprog vm network pa1 pa2 pa3
 
 PACKAGES := $(patsubst %,nachos.%,$(ALLDIRS))
 

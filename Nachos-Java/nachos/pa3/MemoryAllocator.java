@@ -1,6 +1,7 @@
 package nachos.pa3;
 
 import java.util.List;
+import java.util.LinkedList;
 import nachos.machine.Machine;
 import nachos.machine.Processor;
 import nachos.threads.Semaphore;
@@ -10,9 +11,10 @@ public class MemoryAllocator {
     List<Integer> freePages;
 
     MemoryAllocator(){
-        freeMemory = new Semaphore(Processor.numPhysPages);
+        int numPhysPages = Machine.processor().getNumPhysPages();
+        freeMemory = new Semaphore(numPhysPages);
         freePages = new LinkedList<Integer>();
-        for(int i=0; i<Processor.numPhysPages; i++){
+        for(int i=0; i<numPhysPages; i++){
             freePages.add(i);
         }
     }

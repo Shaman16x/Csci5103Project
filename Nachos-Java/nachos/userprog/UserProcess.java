@@ -37,7 +37,7 @@ public class UserProcess {
      * @return	a new process of the correct class.
      */
     public static UserProcess newUserProcess() {
-	return (UserProcess)Lib.constructObject(Machine.getProcessClassName());
+        return (UserProcess)Lib.constructObject(Machine.getProcessClassName());
     }
 
     /**
@@ -49,12 +49,12 @@ public class UserProcess {
      * @return	<tt>true</tt> if the program was successfully executed.
      */
     public boolean execute(String name, String[] args) {
-	if (!load(name, args))
-	    return false;
-	this.name = name;
-	new UThread(this).setName(name).fork();
+        if (!load(name, args))
+            return false;
+        this.name = name;
+        new UThread(this).setName(name).fork();
 
-	return true;
+        return true;
     }
 
     /**
@@ -69,7 +69,7 @@ public class UserProcess {
      * <tt>UThread.restoreState()</tt>.
      */
     public void restoreState() {
-	Machine.processor().setPageTable(pageTable);
+        Machine.processor().setPageTable(pageTable);
     }
 
     /**
@@ -87,18 +87,18 @@ public class UserProcess {
      *		found.
      */
     public String readVirtualMemoryString(int vaddr, int maxLength) {
-	Lib.assertTrue(maxLength >= 0);
+        Lib.assertTrue(maxLength >= 0);
 
-	byte[] bytes = new byte[maxLength+1];
+        byte[] bytes = new byte[maxLength+1];
 
-	int bytesRead = readVirtualMemory(vaddr, bytes);
+        int bytesRead = readVirtualMemory(vaddr, bytes);
 
-	for (int length=0; length<bytesRead; length++) {
-	    if (bytes[length] == 0)
-		return new String(bytes, 0, length);
-	}
+        for (int length=0; length<bytesRead; length++) {
+            if (bytes[length] == 0)
+            return new String(bytes, 0, length);
+        }
 
-	return null;
+        return null;
     }
 
     /**
@@ -129,18 +129,18 @@ public class UserProcess {
      */
     public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
         
-	Lib.assertTrue(offset >= 0 && length >= 0 && offset+length <= data.length);
+        Lib.assertTrue(offset >= 0 && length >= 0 && offset+length <= data.length);
 
-	byte[] memory = Machine.processor().getMemory();
-	
-	// for now, just assume that virtual addresses equal physical addresses
-	if (vaddr < 0 || vaddr >= memory.length)
-	    return 0;
+        byte[] memory = Machine.processor().getMemory();
+        
+        // for now, just assume that virtual addresses equal physical addresses
+        if (vaddr < 0 || vaddr >= memory.length)
+            return 0;
 
-	int amount = Math.min(length, memory.length-vaddr);
-	System.arraycopy(memory, vaddr, data, offset, amount);
+        int amount = Math.min(length, memory.length-vaddr);
+        System.arraycopy(memory, vaddr, data, offset, amount);
 
-	return amount;
+        return amount;
     }
 
     /**
@@ -153,7 +153,7 @@ public class UserProcess {
      * @return	the number of bytes successfully transferred.
      */
     public int writeVirtualMemory(int vaddr, byte[] data) {
-	return writeVirtualMemory(vaddr, data, 0, data.length);
+        return writeVirtualMemory(vaddr, data, 0, data.length);
     }
 
     /**
@@ -170,20 +170,19 @@ public class UserProcess {
      *			virtual memory.
      * @return	the number of bytes successfully transferred.
      */
-    public int writeVirtualMemory(int vaddr, byte[] data, int offset,
-				  int length) {
-	Lib.assertTrue(offset >= 0 && length >= 0 && offset+length <= data.length);
+    public int writeVirtualMemory(int vaddr, byte[] data, int offset, int length) {
+        Lib.assertTrue(offset >= 0 && length >= 0 && offset+length <= data.length);
 
-	byte[] memory = Machine.processor().getMemory();
-	
-	// for now, just assume that virtual addresses equal physical addresses
-	if (vaddr < 0 || vaddr >= memory.length)
-	    return 0;
+        byte[] memory = Machine.processor().getMemory();
+        
+        // for now, just assume that virtual addresses equal physical addresses
+        if (vaddr < 0 || vaddr >= memory.length)
+            return 0;
 
-	int amount = Math.min(length, memory.length-vaddr);
-	System.arraycopy(data, offset, memory, vaddr, amount);
+        int amount = Math.min(length, memory.length-vaddr);
+        System.arraycopy(data, offset, memory, vaddr, amount);
 
-	return amount;
+        return amount;
     }
 
     /**
