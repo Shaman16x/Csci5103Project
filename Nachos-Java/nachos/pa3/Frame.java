@@ -1,6 +1,7 @@
 package nachos.pa3;
 
 import nachos.machine.Processor;
+import nachos.machine.Machine;
 
 /**
  * Frame
