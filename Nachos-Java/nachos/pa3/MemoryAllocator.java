@@ -11,7 +11,7 @@ public class MemoryAllocator {
     Semaphore freeMemory;
     List<Integer> freePages;
 
-    MemoryAllocator(){
+    public MemoryAllocator(){
         int numPhysPages = Machine.processor().getNumPhysPages();
         freeMemory = new Semaphore(numPhysPages);
         freePages = new LinkedList<Integer>();

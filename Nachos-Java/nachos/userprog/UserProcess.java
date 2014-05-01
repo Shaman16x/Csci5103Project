@@ -23,6 +23,7 @@ import java.io.EOFException;
 public class UserProcess {
     // pa3's page table
     //protected PageTable pageTable;
+    protected static MemoryAllocator allocator = new MemoryAllocator();
     /**
      * Allocate a new process.
      */
@@ -30,7 +31,7 @@ public class UserProcess {
         int numPhysPages = Machine.processor().getNumPhysPages();
         pageTable = new TranslationEntry[numPhysPages];
         for(int i = 0; i < numPhysPages; i++){
-            pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
+            pageTable[i] = new TranslationEntry(i, allocator.allocatePage(), true, false, false, false);
         }
     }
     
@@ -158,6 +159,9 @@ public class UserProcess {
         TranslationEntry entry = pageTable[vindex];
         // read data, one page at a time
         while(length > 0){
+            if(!pageTable[vindex].valid) {
+                pageTable[vindex].valid = true;
+            }
             int amount = Math.min(length, maxPageSpace(vaddr, entry));
             length -= amount;
             total += amount;
@@ -216,6 +220,9 @@ public class UserProcess {
         TranslationEntry entry = pageTable[vindex];
         // read data, one page at a time
         while(length > 0){
+            if(!pageTable[vindex].valid) {
+                pageTable[vindex].valid = true;
+            }
             int amount = Math.min(length, maxPageSpace(vaddr, entry));
             length -= amount;
             total += amount;
