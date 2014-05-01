@@ -254,8 +254,10 @@ public class UserProcess {
         return false;
     }
     
-    public static void readyToExit(){
+    public void readyToExit(){
         safeToExit = true;
+        if(totalProcesses < 1)
+            handleHalt();
     }
 
     /**
