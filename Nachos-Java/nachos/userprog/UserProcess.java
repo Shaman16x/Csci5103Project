@@ -301,16 +301,6 @@ public class UserProcess {
         // and finally reserve 1 page for arguments
         numPages++;
 
-        if(numPages > Machine.processor().getNumPhysPages()){
-            System.out.println(name + ",reject," + numPages);
-            return false;
-        }
-        
-        while(numPages > allocator.getNumUnreservedPages())
-            allocator.addToWaiting();
-        
-        allocator.reservePages(numPages);
-
         if (!loadSections())
             return false;
 
@@ -346,8 +336,14 @@ public class UserProcess {
         if (numPages > Machine.processor().getNumPhysPages()) {
             coff.close();
             Lib.debug(dbgProcess, "\tinsufficient physical memory");
+            System.out.println(name + ",reject," + numPages);
             return false;
         }
+
+        while(numPages > allocator.getNumUnreservedPages())
+            allocator.addToWaiting();
+        
+        allocator.reservePages(numPages);
 
         // load sections
         for (int s=0; s<coff.getNumSections(); s++) {
