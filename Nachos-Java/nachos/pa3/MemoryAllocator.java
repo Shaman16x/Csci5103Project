@@ -78,6 +78,7 @@ public class MemoryAllocator {
     }
     
     // adds a page number back to list of free pages
+    // and decrements the number of mapped pages
     public void freePage(int i){
         aLock.acquire();
         numMapped--;
@@ -86,18 +87,22 @@ public class MemoryAllocator {
         aLock.release();
     }
     
+    // returns the number of unmapped pages
     public int getNumAvailablePages(){
         return freePages.size();
     }
     
+    // returns the number of unreserved pages
     public int getNumUnreservedPages(){
         return numPhysPages - numReservedPages;
     }
     
+    // returns the max number of concurrently mapped pages
     public int getMaxNumMapped(){
         return maxNumMapped;
     }
     
+    // returns the max number of concurrently reserved pages
     public int getMaxNumReserved(){
         return maxNumReserved;
     }
