@@ -8,8 +8,8 @@ import nachos.threads.Semaphore;
 
 // keeps track of available physical memory
 public class MemoryAllocator {
-    Semaphore freeMemory;
-    List<Integer> freePages;
+    private Semaphore freeMemory;
+    private List<Integer> freePages;
 
     public MemoryAllocator(){
         int numPhysPages = Machine.processor().getNumPhysPages();
@@ -28,5 +28,9 @@ public class MemoryAllocator {
     public void freePage(int i){
         freeMemory.V();
         freePages.add(i);
+    }
+    
+    public int getNumAvailablePages(){
+        return freePages.size();
     }
 }
