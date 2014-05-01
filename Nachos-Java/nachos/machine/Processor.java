@@ -39,6 +39,8 @@ public final class Processor {
             // default pagesize
             pageSize = 0x400;
         }
+        //System.out.println("PageSize = " + pageSize);
+        
         maxPages = (int) (0x100000000L / pageSize);
 
         this.privilege = privilege;

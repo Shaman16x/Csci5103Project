@@ -38,6 +38,6 @@ int main() {
    * The bottom row of A is all DIM-1, the right column of B is all DIM-1, so
    * the bottom-right cell of C should be DIM * (DIM-1) * (DIM-1)
    */
-  return C[DIM - 1][DIM - 1] == DIM * (DIM - 1) * (DIM - 1);
+  return C[DIM - 1][DIM - 1] != DIM * (DIM - 1) * (DIM - 1);
 }
 
