@@ -249,8 +249,8 @@ public class UserProcess {
      */
     private boolean load(String name, String[] args) {
         Lib.debug(dbgProcess, "UserProcess.load(\"" + name + "\")");
-        
         OpenFile executable = ThreadedKernel.fileSystem.open(name, false);
+        System.out.println("UserProcess.load(\"" + name + "\")"); // DEBUG
         if (executable == null) {
             Lib.debug(dbgProcess, "\topen failed");
             return false;
@@ -472,7 +472,7 @@ public class UserProcess {
      *
      * @param	cause	the user exception that occurred.
      */
-    public void handleException(int cause) {
+    public void handleException(int cause, int baddr) {
         Processor processor = Machine.processor();
 
         switch (cause) {
@@ -486,11 +486,17 @@ public class UserProcess {
             processor.writeRegister(Processor.regV0, result);
             processor.advancePC();
             break;				       
-                           
+        
+        case Processor.exceptionPageFault:
+            System.out.println("Pagefault!");
+            pageTable[baddr/pageSize].ppn = allocator.allocatePage();
+            pageTable[baddr/pageSize].valid = true;
+        break;
         default:
             Lib.debug(dbgProcess, "Unexpected exception: " +
                   Processor.exceptionNames[cause]);
-            Lib.assertNotReached("Unexpected exception");
+            Lib.assertNotReached("Unexpected exception "+
+                  Processor.exceptionNames[cause]);
         }
     }
 
