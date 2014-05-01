@@ -27,7 +27,7 @@ public class MemoryAllocator {
         reservedMemory = new Semaphore(numPhysPages);
         waiting = new Semaphore(0);
         rLock = new Lock();
-        urLock = new Lock();
+        aLock = new Lock();
         numReservedPages = 0;
         maxNumReserved = 0;
         numMapped = 0;
@@ -44,19 +44,11 @@ public class MemoryAllocator {
         numReservedPages += numPages;
         if(numReservedPages > maxNumReserved)
             maxNumReserved = numReservedPages;
-        //while(numPages > 0){
-        //    reservedMemory.P();
-        //    numPages--;
-        //}
         rLock.release();
     }
     
     public void freeReservedMemory(int numPages){
-        /*while(numPages > 0){
-            reservedMemory.V();
-            numPages--;
-        }*/
-        rLock.acquire();
+                rLock.acquire();
         numReservedPages -= numPages;
         rLock.release();
     }

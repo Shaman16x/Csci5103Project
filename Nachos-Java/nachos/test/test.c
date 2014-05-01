@@ -1,10 +1,8 @@
-#include "stdio.h"
-#include "stdlib.h"
+#include "syscall.h"
 
 int main(int argc, char** argv)
 {
   int i;
 
-  printf("Hello World!\n");
-  return 0;
+  return 12345;
 }

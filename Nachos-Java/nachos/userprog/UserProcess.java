@@ -24,7 +24,9 @@ public class UserProcess {
     // pa3's page table
     //protected PageTable pageTable;
     protected static MemoryAllocator allocator = new MemoryAllocator();
-    
+    protected static int totalProcesses = 0;
+    protected static int maxProcesses = 0;
+    protected static boolean safeToExit = false;
     /**
      * Allocate a new process.
      */
@@ -237,6 +239,24 @@ public class UserProcess {
 
         return total;
     }
+    
+    private void incrementTotalProcesses(){
+        totalProcesses++;
+        if(maxProcesses < totalProcesses)
+            maxProcesses = totalProcesses;
+    }
+    
+    // returns true if no more processes
+    private boolean decrementTotalProcesses(){
+        totalProcesses--;
+        if(totalProcesses < 1)
+            return safeToExit;
+        return false;
+    }
+    
+    public static void readyToExit(){
+        safeToExit = true;
+    }
 
     /**
      * Load the executable with the specified name into this process, and
@@ -323,6 +343,7 @@ public class UserProcess {
             stringOffset += 1;
         }
 
+        incrementTotalProcesses();
         return true;
     }
 
@@ -406,6 +427,11 @@ public class UserProcess {
      * Handle the halt() system call. 
      */
     private int handleHalt() {
+        System.out.println("\n\nPA3 Statistics");
+        System.out.println("Maximum Processes:     " + maxProcesses);
+        System.out.println("Maximum Reserved Pages ");
+        System.out.println("Maximum Mapped Frames: ");
+        
         Machine.halt();
         
         Lib.assertNotReached("Machine.halt() did not halt machine!");
@@ -461,6 +487,9 @@ public class UserProcess {
             unloadSections();
             System.out.println("Exiting program.");
             System.out.println(name + ",exit," + KThread.currentThread().getID() + "," + a0);
+            // check if this process is the last process, halt if true
+            if(decrementTotalProcesses())
+                handleHalt();
             KThread.currentThread().finish();
             return a0;
         default:
@@ -491,7 +520,7 @@ public class UserProcess {
                            );
             processor.writeRegister(Processor.regV0, result);
             processor.advancePC();
-            break;				       
+            break;
         
         case Processor.exceptionPageFault:
             System.out.println("Pagefault!");
