@@ -24,14 +24,12 @@ public class UserProcess {
     // pa3's page table
     //protected PageTable pageTable;
     protected static MemoryAllocator allocator = new MemoryAllocator();
-    private int numAllocated;
     /**
      * Allocate a new process.
      */
     public UserProcess() {
         int numPhysPages = Machine.processor().getNumPhysPages();
         pageTable = new TranslationEntry[numPhysPages];
-        numAllocated = 0;
         for(int i = 0; i < numPhysPages; i++){
             pageTable[i] = new TranslationEntry(i, -1, false, false, false, false);
         }
@@ -223,10 +221,8 @@ public class UserProcess {
         // read data, one page at a time
         while(length > 0){
             if(!pageTable[vindex].valid) {
-                if(allocator.getNumAvailablePages() >= (numPages - numAllocated)){
-                    pageTable[vindex].valid = true;
-                    pageTable[vindex].ppn = allocator.allocatePage();
-                }
+                pageTable[vindex].valid = true;
+                pageTable[vindex].ppn = allocator.allocatePage();
             }
             int amount = Math.min(length, maxPageSpace(vaddr, entry));
             length -= amount;
@@ -310,7 +306,10 @@ public class UserProcess {
             return false;
         }
         
-        allocator.reserveMemory(numPages);
+        while(numPages > allocator.getNumUnreservedPages())
+            allocator.addToWaiting();
+        
+        allocator.reservePages(numPages);
 
         if (!loadSections())
             return false;
@@ -372,9 +371,10 @@ public class UserProcess {
      * Release any resources allocated by <tt>loadSections()</tt>.
      */
     protected void unloadSections() {
-        allocator.freeReservedMemory(numPages);
         for(int i=0; i<numPages; i++)
             allocator.freePage(pageTable[i].ppn);
+        allocator.freeReservedMemory(numPages);
+        allocator.wakeUpWaiting();
     }    
 
     /**
