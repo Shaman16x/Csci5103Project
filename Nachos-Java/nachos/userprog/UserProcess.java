@@ -309,11 +309,8 @@ public class UserProcess {
             System.out.println(name + ",reject," + numPages);
             return false;
         }
-        else if(numPages > allocator.getNumAvailablePages()){
-            System.out.println("not enough avaiable pages for program");
-            // figure out wait
-            return false;
-        }
+        
+        allocator.reserveMemory(numPages);
 
         if (!loadSections())
             return false;
@@ -375,6 +372,7 @@ public class UserProcess {
      * Release any resources allocated by <tt>loadSections()</tt>.
      */
     protected void unloadSections() {
+        allocator.freeReservedMemory(numPages);
         for(int i=0; i<numPages; i++)
             allocator.freePage(pageTable[i].ppn);
     }    
