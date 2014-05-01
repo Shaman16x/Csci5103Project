@@ -355,7 +355,10 @@ public class UserProcess {
             for (int i=0; i<section.getLength(); i++) {
                 int vpn = section.getFirstVPN()+i;
                 
-                pageTable[vpn].ppn = allocator.allocatePage();
+                if(!pageTable[vpn].valid){
+                    pageTable[vpn].ppn = allocator.allocatePage();
+                    pageTable[vpn].valid = true;
+                }
                 
                 // for now, just assume virtual addresses=physical addresses
                 section.loadPage(i, pageTable[vpn].ppn);
