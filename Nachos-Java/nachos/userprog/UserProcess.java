@@ -223,6 +223,7 @@ public class UserProcess {
         TranslationEntry entry = pageTable[vindex];
         // read data, one page at a time
         while(length > 0){
+            // this is a page fault
             if(!pageTable[vindex].valid) {
                 pageTable[vindex].valid = true;
                 pageTable[vindex].ppn = allocator.allocatePage();
@@ -240,6 +241,7 @@ public class UserProcess {
         return total;
     }
     
+    //kees track of max number of programs
     private void incrementTotalProcesses(){
         totalProcesses++;
         if(maxProcesses < totalProcesses)
@@ -355,6 +357,8 @@ public class UserProcess {
      * @return	<tt>true</tt> if the sections were successfully loaded.
      */
     protected boolean loadSections() {
+        // if number of physical pages is less than the number of pages of
+        // the program then reject the program because we are not swapping.
         if (numPages > Machine.processor().getNumPhysPages()) {
             coff.close();
             Lib.debug(dbgProcess, "\tinsufficient physical memory");
@@ -362,9 +366,13 @@ public class UserProcess {
             return false;
         }
 
+        // if the number of unreserved pages is less than the program's
+        // number of pages then the program waits until there is enough.
+        // This takes care of deadlock due to not swapping.
         while(numPages > allocator.getNumUnreservedPages())
             allocator.addToWaiting();
         
+        // reserves pages to help avoid deadlock
         allocator.reservePages(numPages);
 
         // load sections
@@ -377,12 +385,12 @@ public class UserProcess {
             for (int i=0; i<section.getLength(); i++) {
                 int vpn = section.getFirstVPN()+i;
                 
+                // map a physical page to a virtual page and set flag for mapped
                 if(!pageTable[vpn].valid){
                     pageTable[vpn].ppn = allocator.allocatePage();
                     pageTable[vpn].valid = true;
                 }
                 
-                // for now, just assume virtual addresses=physical addresses
                 section.loadPage(i, pageTable[vpn].ppn);
             }
         }
