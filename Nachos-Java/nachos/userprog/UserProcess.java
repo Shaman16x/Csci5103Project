@@ -21,8 +21,6 @@ import java.io.EOFException;
  * @see	nachos.network.NetProcess
  */
 public class UserProcess {
-    // pa3's page table
-    //protected PageTable pageTable;
     protected static MemoryAllocator allocator = new MemoryAllocator();
     protected static int totalProcesses = 0;
     protected static int maxProcesses = 0;
