@@ -13,10 +13,13 @@ public class MemoryAllocator {
     private List<Integer> freePages;
     private int numReservedPages;
     private int numPhysPages;
+    private int maxNumReserved;
+    private int maxNumMapped;
+    private int numMapped;
     private Semaphore reservedMemory;
     public Semaphore waiting;
     private Lock rLock;
-    private Lock urLock;
+    private Lock aLock;
 
     public MemoryAllocator(){
         numPhysPages = Machine.processor().getNumPhysPages();
@@ -26,6 +29,8 @@ public class MemoryAllocator {
         rLock = new Lock();
         urLock = new Lock();
         numReservedPages = 0;
+        maxNumReserved = 0;
+        numMapped = 0;
         freePages = new LinkedList<Integer>();
         for(int i=0; i<numPhysPages; i++){
             freePages.add(i);
@@ -37,6 +42,8 @@ public class MemoryAllocator {
     public void reservePages(int numPages){
         rLock.acquire();
         numReservedPages += numPages;
+        if(numReservedPages > maxNumReserved)
+            maxNumReserved = numReservedPages;
         //while(numPages > 0){
         //    reservedMemory.P();
         //    numPages--;
@@ -49,9 +56,9 @@ public class MemoryAllocator {
             reservedMemory.V();
             numPages--;
         }*/
-        urLock.acquire();
+        rLock.acquire();
         numReservedPages -= numPages;
-        urLock.release();
+        rLock.release();
     }
     
     public void addToWaiting(){
@@ -63,13 +70,22 @@ public class MemoryAllocator {
     }
     
     public Integer allocatePage(){
+        aLock.acquire();
+        numMapped++;
+        if(numMapped > maxNumMapped)
+            maxNumMapped = numMapped;
         freeMemory.P();
-        return freePages.remove(0);
+        int ret = freePages.remove(0);
+        aLock.release();
+        return ret;
     }
     
     public void freePage(int i){
+        aLock.acquire();
+        numMapped--;
         freeMemory.V();
         freePages.add(i);
+        aLock.release();
     }
     
     public int getNumAvailablePages(){
@@ -78,5 +94,13 @@ public class MemoryAllocator {
     
     public int getNumUnreservedPages(){
         return numPhysPages - numReservedPages;
+    }
+    
+    public int getMaxNumMapped(){
+        return maxNumMapped;
+    }
+    
+    public int getMaxNumReserved(){
+        return maxNumReserved;
     }
 }

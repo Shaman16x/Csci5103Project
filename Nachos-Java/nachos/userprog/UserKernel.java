@@ -56,10 +56,10 @@ public class UserKernel extends ThreadedKernel {
      * @return	the current process, or <tt>null</tt> if no process is current.
      */
     public static UserProcess currentProcess() {
-	if (!(KThread.currentThread() instanceof UThread))
-	    return null;
-	
-	return ((UThread) KThread.currentThread()).process;
+        if (!(KThread.currentThread() instanceof UThread))
+            return null;
+        
+        return ((UThread) KThread.currentThread()).process;
     }
 
     /**
@@ -103,12 +103,12 @@ public class UserKernel extends ThreadedKernel {
         }
 
         KThread.currentThread().finish();
-        }
+    }
 
-        /**
-         * Terminate this kernel. Never returns.
-         */
-        public void terminate() {
+    /**
+     * Terminate this kernel. Never returns.
+     */
+    public void terminate() {
         super.terminate();
     }
 

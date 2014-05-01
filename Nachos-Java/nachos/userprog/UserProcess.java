@@ -24,6 +24,7 @@ public class UserProcess {
     // pa3's page table
     //protected PageTable pageTable;
     protected static MemoryAllocator allocator = new MemoryAllocator();
+    
     /**
      * Allocate a new process.
      */
