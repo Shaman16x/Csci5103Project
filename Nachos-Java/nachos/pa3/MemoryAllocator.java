@@ -11,14 +11,21 @@ import nachos.threads.Lock;
 public class MemoryAllocator {
     private Semaphore freeMemory;
     private List<Integer> freePages;
+    private int numReservedPages;
+    private int numPhysPages;
     private Semaphore reservedMemory;
+    public Semaphore waiting;
     private Lock rLock;
+    private Lock urLock;
 
     public MemoryAllocator(){
-        int numPhysPages = Machine.processor().getNumPhysPages();
+        numPhysPages = Machine.processor().getNumPhysPages();
         freeMemory = new Semaphore(numPhysPages);
         reservedMemory = new Semaphore(numPhysPages);
+        waiting = new Semaphore(0);
         rLock = new Lock();
+        urLock = new Lock();
+        numReservedPages = 0;
         freePages = new LinkedList<Integer>();
         for(int i=0; i<numPhysPages; i++){
             freePages.add(i);
@@ -27,20 +34,32 @@ public class MemoryAllocator {
     
     // Memory is reserved on a fcfs basis
     // Prevents potential deadlocks due to lack of memory
-    public void reserveMemory(int numPages){
+    public void reservePages(int numPages){
         rLock.acquire();
-        while(numPages > 0){
-            reservedMemory.P();
-            numPages--;
-        }
+        numReservedPages += numPages;
+        //while(numPages > 0){
+        //    reservedMemory.P();
+        //    numPages--;
+        //}
         rLock.release();
     }
     
     public void freeReservedMemory(int numPages){
-        while(numPages > 0){
+        /*while(numPages > 0){
             reservedMemory.V();
             numPages--;
-        }
+        }*/
+        urLock.acquire();
+        numReservedPages -= numPages;
+        urLock.release();
+    }
+    
+    public void addToWaiting(){
+        waiting.P();
+    }
+    
+    public void wakeUpWaiting(){
+        waiting.V();
     }
     
     public Integer allocatePage(){
@@ -55,5 +74,9 @@ public class MemoryAllocator {
     
     public int getNumAvailablePages(){
         return freePages.size();
+    }
+    
+    public int getNumUnreservedPages(){
+        return numPhysPages - numReservedPages;
     }
 }
