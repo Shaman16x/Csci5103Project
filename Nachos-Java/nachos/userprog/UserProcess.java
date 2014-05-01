@@ -429,8 +429,8 @@ public class UserProcess {
     private int handleHalt() {
         System.out.println("\n\nPA3 Statistics");
         System.out.println("Maximum Processes:     " + maxProcesses);
-        System.out.println("Maximum Reserved Pages ");
-        System.out.println("Maximum Mapped Frames: ");
+        System.out.println("Maximum Reserved Pages " + allocator.getMaxNumReserved());
+        System.out.println("Maximum Mapped Frames: " + allocator.getMaxNumMapped());
         
         Machine.halt();
         
