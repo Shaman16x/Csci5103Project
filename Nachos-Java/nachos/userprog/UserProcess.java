@@ -3,6 +3,8 @@ package nachos.userprog;
 import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
+import nachos.pa3.PageTable;
+import nachos.pa3.MemoryAllocator;
 
 import java.io.EOFException;
 
@@ -19,14 +21,17 @@ import java.io.EOFException;
  * @see	nachos.network.NetProcess
  */
 public class UserProcess {
+    // pa3's page table
+    //protected PageTable pageTable;
     /**
      * Allocate a new process.
      */
     public UserProcess() {
         int numPhysPages = Machine.processor().getNumPhysPages();
         pageTable = new TranslationEntry[numPhysPages];
-        for (int i=0; i<numPhysPages; i++)
-            pageTable[i] = new TranslationEntry(i,i, true,false,false,false);
+        for(int i = 0; i < numPhysPages; i++){
+            pageTable[i] = new TranslationEntry(i, i, true, false, false, false);
+        }
     }
     
     /**
@@ -70,6 +75,17 @@ public class UserProcess {
      */
     public void restoreState() {
         Machine.processor().setPageTable(pageTable);
+    }
+    
+    // determines the address in physical memory
+    private int getPhysAddr(int vaddr, TranslationEntry entry){
+        int offset = vaddr - (entry.vpn*pageSize);
+        return entry.ppn*pageSize + offset;
+    }
+    
+    // determine amount of space in page
+    private int maxPageSpace(int vadder, TranslationEntry entry){
+        return vadder - entry.vpn*pageSize;
     }
 
     /**
@@ -130,17 +146,29 @@ public class UserProcess {
     public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
         
         Lib.assertTrue(offset >= 0 && length >= 0 && offset+length <= data.length);
-
+        int total = 0;
         byte[] memory = Machine.processor().getMemory();
         
-        // for now, just assume that virtual addresses equal physical addresses
+
         if (vaddr < 0 || vaddr >= memory.length)
             return 0;
+            
+        // modified to support actual paging
+        int vindex = vaddr/pageSize;
+        TranslationEntry entry = pageTable[vindex];
+        // read data, one page at a time
+        while(length > 0){
+            int amount = Math.min(length, maxPageSpace(vaddr, entry));
+            length -= amount;
+            total += amount;
+            int paddr = getPhysAddr(vaddr, entry);
+            vindex++;
+            entry = pageTable[vindex];
+            vaddr = vindex*pageSize;
+            System.arraycopy(memory, paddr, data, offset, amount);
+        }
 
-        int amount = Math.min(length, memory.length-vaddr);
-        System.arraycopy(memory, vaddr, data, offset, amount);
-
-        return amount;
+        return total;
     }
 
     /**
@@ -174,15 +202,31 @@ public class UserProcess {
         Lib.assertTrue(offset >= 0 && length >= 0 && offset+length <= data.length);
 
         byte[] memory = Machine.processor().getMemory();
-        
+        int total = 0;
         // for now, just assume that virtual addresses equal physical addresses
         if (vaddr < 0 || vaddr >= memory.length)
             return 0;
 
-        int amount = Math.min(length, memory.length-vaddr);
-        System.arraycopy(data, offset, memory, vaddr, amount);
+        //int amount = Math.min(length, memory.length-vaddr);
+        //System.arraycopy(data, offset, memory, vaddr, amount);
 
-        return amount;
+        //return amount;
+        
+        int vindex = vaddr/pageSize;
+        TranslationEntry entry = pageTable[vindex];
+        // read data, one page at a time
+        while(length > 0){
+            int amount = Math.min(length, maxPageSpace(vaddr, entry));
+            length -= amount;
+            total += amount;
+            int paddr = getPhysAddr(vaddr, entry);
+            vindex++;
+            entry = pageTable[vindex];
+            vaddr = vindex*pageSize;
+            System.arraycopy(data, offset, memory, paddr, amount);
+        }
+
+        return total;
     }
 
     /**
@@ -391,9 +435,11 @@ public class UserProcess {
         case syscallHalt:
             return handleHalt();
         case syscallExit:
+            //pageTable.freeTable();
             System.out.println("Exiting program.");
             System.out.println(name + "," + "exit" + "," + KThread.currentThread().getID() + a0);
             // TODO: determine how to "exit" a program
+            return a0;
         default:
             Lib.debug(dbgProcess, "Unknown syscall " + syscall);
             Lib.assertNotReached("Unknown system call!");

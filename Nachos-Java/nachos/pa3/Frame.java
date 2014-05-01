@@ -37,7 +37,7 @@ public class Frame {
     
     // determine if this page has been mapped to a
     // physical page
-    public boolean isMapped(){
+    public boolean pageFault(){
         return (physicalIndex != -1);
     }
     
@@ -48,7 +48,7 @@ public class Frame {
     }
     
     // writes memory
-    int writeMemory(int vaddr, byte[] data, int offset, int length){
+    public int writeMemory(int vaddr, byte[] data, int offset, int length){
         byte[] memory = Machine.processor().getMemory();
         int paddr = getPhysAddr(vaddr);
         
@@ -58,7 +58,7 @@ public class Frame {
     }
     
     // reads memory
-    int readMemory(int vaddr, byte[] data, int offset, int length){
+    public int readMemory(int vaddr, byte[] data, int offset, int length){
         byte[] memory = Machine.processor().getMemory();
         int paddr = getPhysAddr(vaddr);
         

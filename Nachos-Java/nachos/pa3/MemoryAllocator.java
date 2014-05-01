@@ -6,6 +6,7 @@ import nachos.machine.Machine;
 import nachos.machine.Processor;
 import nachos.threads.Semaphore;
 
+// keeps track of available physical memory
 public class MemoryAllocator {
     Semaphore freeMemory;
     List<Integer> freePages;
