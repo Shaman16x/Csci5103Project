@@ -398,10 +398,10 @@ public final class Machine {
     }
     
     /**
-     * 
-     * Return a list of shell programs to run
-     * 
-     */
+     * parses the value of the Kernel.shellPrograms field
+     * in the config file given at run.
+	 * returns a list of strings representing the name of the program
+	 */
     public static List<String> getShellProgramNames() {
         List<String> nameList = new LinkedList<String>();
         String arg = Config.getString("Kernel.shellPrograms");
