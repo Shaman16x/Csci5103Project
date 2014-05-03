@@ -33,7 +33,10 @@ UserKernel
 
 Processor
 -------------------------------------------------------------------------------
-
+We modified Processor so that it set the pageSize to the specificed value in the
+config file used when run.  The field in that sets the page size in the config
+file is:
+Processor.pageSize
 
 Modifications to Nachos
 -------------------------------------------------------------------------------

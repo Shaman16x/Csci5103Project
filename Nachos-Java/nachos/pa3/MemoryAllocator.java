@@ -80,11 +80,13 @@ public class MemoryAllocator {
     // adds a page number back to list of free pages
     // and decrements the number of mapped pages
     public void freePage(int i){
-        aLock.acquire();
-        numMapped--;
-        freeMemory.V();
-        freePages.add(i);
-        aLock.release();
+		if(i >= 0){        
+			aLock.acquire();
+        	numMapped--;
+        	freeMemory.V();
+        	freePages.add(i);
+        	aLock.release();
+		}
     }
     
     // returns the number of unmapped pages
