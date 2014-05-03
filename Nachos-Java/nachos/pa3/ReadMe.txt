@@ -3,9 +3,11 @@ Programming Assignment 3
 Jeremiah Thomas:4145047
 Kyle Michaels:3914066
 
+
 How To Compile
 -------------------------------------------------------------------------------
 In the Nachos-Java directory type "make".
+
 
 How to Run
 -------------------------------------------------------------------------------
@@ -32,6 +34,7 @@ ShellPrograms must be formatted as follows.
 You will also need to specify the appropriate location of the Directory
 containing user programs by setting "FileSystem.testDirectory"
 
+
 File Locations
 -------------------------------------------------------------------------------
 The New class MemoryAllocator is located in "Nachos-Java/nachos/pa3"
@@ -44,6 +47,14 @@ The test user programs are located in:
 "Nachos-Java/nachos/test/x###"
 "x###" determines the page size of programs (eg x200 -> 0x200 -> 512 bytes)
 
+
+Potential Errors
+-------------------------------------------------------------------------------
+A know error with nachos is when too many programs are loaded at once.
+This causes an security error within the Nachos system.
+To avoid this all conf files run a safe number of programs.
+
+
 Debug Output
 -------------------------------------------------------------------------------
 To better understand the operation of the userKernel some debug information
@@ -52,6 +63,7 @@ These are:
     * <Attempting to load (program name)>
     * <(program name) has loaded successfully>
     * <Pagefault>
+
 
 Tests
 -------------------------------------------------------------------------------
@@ -93,10 +105,10 @@ safematmult.coff,exit,5,0
 PA3 Statistics
 Maximum Processes: 2
 Maximum Reserved Pages: 30
-Maximum Mapped Frames: 2
+Maximum Mapped Frames: 14
 Machine halting!
 
-Ticks: total 181282, kernel 19740, user 161542
+Ticks: total 180802, kernel 19260, user 161542
 Disk I/O: reads 0, writes 0
 Console I/O: reads 0, writes 0
 Paging: page faults 4, TLB misses 0
@@ -104,7 +116,8 @@ Network I/O: received 0, sent 0
 ===============================================================================
 
 Was we can see all programs load and exit successfully.
-The number of page faults
+The number of page faults matches the number of times <pagefault> occurs in
+the program.  The maximum number of cocurrent processes match
 We also see the statistics at the bottom report.
 
 The meaning of these statistics is given in depth with the design document.
@@ -112,10 +125,45 @@ The meaning of these statistics is given in depth with the design document.
 "pa3_littleMemory.conf" tests when programs require more frames than what is
 in physical memory.
 
-Output from "pa3_mediumMemory.conf"
+Output from "pa3_littleMemory.conf"
+===============================================================================
+<Attempting to load test.coff>
+<test.coff has loaded successfully>
+<pagefault>
+test.coff,exit,2,12345
+<Attempting to load test.coff>
+<test.coff has loaded successfully>
+<pagefault>
+test.coff,exit,3,12345
+<Attempting to load safematmult.coff>
+safematmult.coff,reject,21
+<Attempting to load safematmult.coff>
+safematmult.coff,reject,21
+<Kernel has finished loading
+
+
+PA3 Statistics
+Maximum Processes: 1
+Maximum Reserved Pages: 10
+Maximum Mapped Frames: 2
+Machine halting!
+
+Ticks: total 22142, kernel 22110, user 32
+Disk I/O: reads 0, writes 0
+Console I/O: reads 0, writes 0
+Paging: page faults 2, TLB misses 0
+Network I/O: received 0, sent 0
 ===============================================================================
 
-===============================================================================
+In this test, there is only 20 physical pages available.  However, safematmult
+requires 21.  This means that the programs are rejected by the system
+immediately after the program attempts to load.
+
+We also se that the max reserved frame is lower than the previous test
+because test.coff require fewer frames for execution.
+
+This test shows that the system successfully rejects programs that are too
+memory heavy to run.
 
 "pa3_mediumMemory.conf" Tests the situation where there is enough memory within
 to run a program, but not both at the same time.
@@ -144,14 +192,28 @@ safematmult.coff,exit,5,0
 PA3 Statistics
 Maximum Processes: 1
 Maximum Reserved Pages: 21
-Maximum Mapped Frames: 2
+Maximum Mapped Frames: 13
 Machine halting!
+
+Ticks: total 184512, kernel 22970, user 161542
+Disk I/O: reads 0, writes 0
+Console I/O: reads 0, writes 0
+Paging: page faults 4, TLB misses 0
+Network I/O: received 0, sent 0
 ===============================================================================
 
 As shown in the output all programs run succesffuly.  However, only one 
-instance of safematmult.coff runs
+instance of safematmult.coff runs at a time.
 
+As seen in the output, the second safematmult attempts to load.  It successfully
+loads immediately after the first one has exited and released the memory needed.
 
+This leads to the one max process at any time while running.
+
+This means program successfully forces programs to wait until there is enough 
+unreserved memory to run.
+
+-------------------------------------------------------------------------------
 
 For thorough analysis of the paging system, refer to Performance Analysis
 section of Design.txt
