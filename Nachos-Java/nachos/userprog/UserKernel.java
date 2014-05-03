@@ -96,12 +96,12 @@ public class UserKernel extends ThreadedKernel {
         UserProcess process = UserProcess.newUserProcess();
         List<String> shellProgram = Machine.getShellProgramNames();	
         for(String s: shellProgram){
-            System.out.println("Making a process");
+            //System.out.println("Making a process");
             process = UserProcess.newUserProcess();
             process.execute(s, new String[] { });
         }
 
-        System.out.println("All right i'm done!");
+        System.out.println("<Kernel has finished loading");
         process.readyToExit();
         KThread.currentThread().finish();
     }

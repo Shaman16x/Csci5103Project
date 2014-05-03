@@ -146,7 +146,6 @@ public class UserProcess {
      * @return	the number of bytes successfully transferred.
      */
     public int readVirtualMemory(int vaddr, byte[] data, int offset, int length) {
-        
         Lib.assertTrue(offset >= 0 && length >= 0 && offset+length <= data.length);
         int total = 0;
         byte[] memory = Machine.processor().getMemory();
@@ -253,7 +252,7 @@ public class UserProcess {
             return safeToExit;
         return false;
     }
-    
+
     public void readyToExit(){
         safeToExit = true;
         if(totalProcesses < 1)
@@ -273,7 +272,7 @@ public class UserProcess {
     private boolean load(String name, String[] args) {
         Lib.debug(dbgProcess, "UserProcess.load(\"" + name + "\")");
         OpenFile executable = ThreadedKernel.fileSystem.open(name, false);
-        System.out.println("UserProcess.load(\"" + name + "\")"); // DEBUG
+        System.out.println("<Attempting to load " + name + ">"); // DEBUG
         if (executable == null) {
             Lib.debug(dbgProcess, "\topen failed");
             return false;
@@ -324,7 +323,7 @@ public class UserProcess {
         // and finally reserve 1 page for arguments
         numPages++;
 
-        if (!loadSections())
+        if (!loadSections(name))
             return false;
 
         // store arguments in last page
@@ -345,6 +344,7 @@ public class UserProcess {
             stringOffset += 1;
         }
 
+        System.out.println("<" + name + " has loaded successfully>");
         incrementTotalProcesses();
         return true;
     }
@@ -356,13 +356,13 @@ public class UserProcess {
      *
      * @return	<tt>true</tt> if the sections were successfully loaded.
      */
-    protected boolean loadSections() {
+    protected boolean loadSections(String programName) {
         // if number of physical pages is less than the number of pages of
         // the program then reject the program because we are not swapping.
         if (numPages > Machine.processor().getNumPhysPages()) {
             coff.close();
             Lib.debug(dbgProcess, "\tinsufficient physical memory");
-            System.out.println(name + ",reject," + numPages);
+            System.out.println(programName + ",reject," + numPages);
             return false;
         }
 
@@ -493,7 +493,6 @@ public class UserProcess {
             return handleHalt();
         case syscallExit:
             unloadSections();
-            System.out.println("Exiting program.");
             System.out.println(name + ",exit," + KThread.currentThread().getID() + "," + a0);
             // check if this process is the last process, halt if true
             if(decrementTotalProcesses())
@@ -531,7 +530,7 @@ public class UserProcess {
             break;
         
         case Processor.exceptionPageFault:
-            System.out.println("Pagefault!");
+            System.out.println("<pagefault>");
             pageTable[baddr/pageSize].ppn = allocator.allocatePage();
             pageTable[baddr/pageSize].valid = true;
         break;

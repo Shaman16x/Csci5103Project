@@ -1,5 +1,5 @@
 Programming Assignment 3
-
+-------------------------------------------------------------------------------
 Jeremiah Thomas:4145047
 Kyle Michaels:3914066
 
@@ -9,22 +9,152 @@ In the Nachos-Java directory type "make".
 
 How to Run
 -------------------------------------------------------------------------------
-To run this code use
+To run this code use any of the following conf files
+    * pa3_x200.conf
+    * pa3_x400.conf
+    * pa3_x800.conf
+    * pa3_smallMemory.conf
+    * pa3_mediumMemory.conf
+    
 
-To create your own conf files first take 
+To create your own conf files first take one of the provided conf.
+Then to modify the behavior of the program you can change:
+    * Processor.pageSize -  determines page size
+    * Processof.numPhysPages - determines number of phsyical memory pages
+    * Kernel.shellPrograms - determine what user programs to run
+
+Notes: 
+User programs MUST be compiled to use that pageSize.
+
+ShellPrograms must be formatted as follows.
+    #:<prog1>,<prog2>,...
+
+You will also need to specify the appropriate location of the Directory
+containing user programs by setting "FileSystem.testDirectory"
 
 File Locations
 -------------------------------------------------------------------------------
-All New class files are in "Nachos-Java/nachos/pa3"
+The New class MemoryAllocator is located in "Nachos-Java/nachos/pa3"
 
-Modified files
+Modified files UserProces and UserKernel are in "Nachos-Java/nachos/userprog"
 
+Modified file Processor is located in "Nachos-Java/nachos/machine"
 
 The test user programs are located in:
 "Nachos-Java/nachos/test/x###"
 "x###" determines the page size of programs (eg x200 -> 0x200 -> 512 bytes)
 
+Debug Output
+-------------------------------------------------------------------------------
+To better understand the operation of the userKernel some debug information
+has been left in the console output.
+These are:
+    * <Attempting to load (program name)>
+    * <(program name) has loaded successfully>
+    * <Pagefault>
+
 Tests
 -------------------------------------------------------------------------------
+Test for this assignment were run using the conf files mention.  They test two
+configurable aspects of the program, pageSize and numPhysPages.
+
+All tests were ran under the same conditions.  Two copies of two programs
+(test.coff and safematmult.coff) were run.  "test.coff" simply exits with the 
+number 12345 and "safematmult.coff" preforms a matrix multiplication before
+exiting.
+
+The "pa3_x###.conf" files test valid running conditions with pages of 
+varrying size.
+
+x400 represents the original page size of the program (1024 bytes).  x200 and
+x800 are half (512 bytes) and double (2048 bytes)
+
+Output from pa3_x400.conf
+===============================================================================
+<Attempting to load test.coff>
+<test.coff has loaded successfully>
+<pagefault>
+test.coff,exit,2,12345
+<Attempting to load test.coff>
+<test.coff has loaded successfully>
+<pagefault>
+test.coff,exit,3,12345
+<Attempting to load safematmult.coff>
+<safematmult.coff has loaded successfully>
+<pagefault>
+<Attempting to load safematmult.coff>
+<safematmult.coff has loaded successfully>
+<Kernel has finished loading
+<pagefault>
+safematmult.coff,exit,4,0
+safematmult.coff,exit,5,0
+
+
+PA3 Statistics
+Maximum Processes: 2
+Maximum Reserved Pages: 30
+Maximum Mapped Frames: 2
+Machine halting!
+
+Ticks: total 181282, kernel 19740, user 161542
+Disk I/O: reads 0, writes 0
+Console I/O: reads 0, writes 0
+Paging: page faults 4, TLB misses 0
+Network I/O: received 0, sent 0
+===============================================================================
+
+Was we can see all programs load and exit successfully.
+The number of page faults
+We also see the statistics at the bottom report.
+
+The meaning of these statistics is given in depth with the design document.
+
+"pa3_littleMemory.conf" tests when programs require more frames than what is
+in physical memory.
+
+Output from "pa3_mediumMemory.conf"
+===============================================================================
+
+===============================================================================
+
+"pa3_mediumMemory.conf" Tests the situation where there is enough memory within
+to run a program, but not both at the same time.
+
+Output from "pa3_mediumMemory.conf"
+===============================================================================
+<Attempting to load test.coff>
+<test.coff has loaded successfully>
+<pagefault>
+test.coff,exit,2,12345
+<Attempting to load test.coff>
+<test.coff has loaded successfully>
+<pagefault>
+test.coff,exit,3,12345
+<Attempting to load safematmult.coff>
+<safematmult.coff has loaded successfully>
+<pagefault>
+<Attempting to load safematmult.coff>
+safematmult.coff,exit,4,0
+<safematmult.coff has loaded successfully>
+<Kernel has finished loading
+<pagefault>
+safematmult.coff,exit,5,0
+
+
+PA3 Statistics
+Maximum Processes: 1
+Maximum Reserved Pages: 21
+Maximum Mapped Frames: 2
+Machine halting!
+===============================================================================
+
+As shown in the output all programs run succesffuly.  However, only one 
+instance of safematmult.coff runs
+
+
+
+For thorough analysis of the paging system, refer to Performance Analysis
+section of Design.txt
+
 
 
