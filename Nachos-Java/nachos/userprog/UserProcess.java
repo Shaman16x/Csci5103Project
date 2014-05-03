@@ -3,7 +3,6 @@ package nachos.userprog;
 import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
-import nachos.pa3.PageTable;
 import nachos.pa3.MemoryAllocator;
 
 import java.io.EOFException;

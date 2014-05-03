@@ -62,7 +62,7 @@ public class VMProcess extends UserProcess {
 
 	switch (cause) {
 	default:
-	    super.handleException(cause);
+	    super.handleException(cause,0);
 	    break;
 	}
     }

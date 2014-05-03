@@ -39,7 +39,7 @@ pa2 =       StaticPriorityScheduler StaticPriorityQueue \
             LockTest MutexTest \
             ThreadState ThreadStateComparator
 
-pa3 =       MemoryAllocator Frame
+pa3 =       MemoryAllocator
 
 ALLDIRS = machine security ag threads userprog vm network pa1 pa2 pa3
 

@@ -1,0 +1,46 @@
+Design Decisions
+-------------------------------------------------------------------------------
+Jeremiah Thomas:4145047
+Kyle Michaels:3914066
+
+General Overview
+-------------------------------------------------------------------------------
+The purpose of this project was to make nachos handle user programs and
+implement a memory allocator that would safely map physical pages of memory to
+a virtual page for programs when they need to load.  This memory allocator also
+needed to correctly free pages when a program finished.  To do this we created
+our own MemoryAllocator class that took care of all these requirments.
+
+As described in the write up for pa3 we did not have to implement page swapping.
+This meant we had to limit when we loaded physical pages and had to make programs
+wait when they couldn't load.  This process is described below in the section
+explaining the modification to the UserProcess class.
+
+MemoryAllocator
+-------------------------------------------------------------------------------
+
+
+Data Structure:
+
+
+UserProcess
+-------------------------------------------------------------------------------
+
+
+UserKernel
+-------------------------------------------------------------------------------
+
+
+Processor
+-------------------------------------------------------------------------------
+We modified Processor so that it set the pageSize to the specificed value in the
+config file used when run.  The field in that sets the page size in the config
+file is:
+Processor.pageSize
+
+Modifications to Nachos
+-------------------------------------------------------------------------------
+UserProcess, UserKernel, Processor were all modified and are described above.
+
+Performance Analysis:
+	
