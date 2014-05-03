@@ -67,8 +67,10 @@ These are:
 
 Tests
 -------------------------------------------------------------------------------
-Test for this assignment were run using the conf files mention.  They test two
-configurable aspects of the program, pageSize and numPhysPages.
+Test for this assignment were run using the conf files mentioned in the how to
+run section of this document.  There are additional conf files in the analysis
+folder however they are only used for performance analysis and will not be
+mentioned in this document.
 
 All tests were ran under the same conditions.  Two copies of two programs
 (test.coff and safematmult.coff) were run.  "test.coff" simply exits with the 
