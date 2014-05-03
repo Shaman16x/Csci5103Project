@@ -79,12 +79,12 @@ public class MemoryAllocator {
     
     // adds a page number back to list of free pages
     // and decrements the number of mapped pages
-    public void freePage(int i){
-		if(i >= 0){        
+    public void freePage(int ppn){
+		if(ppn >= 0){        
 			aLock.acquire();
         	numMapped--;
         	freeMemory.V();
-        	freePages.add(i);
+        	freePages.add(ppn);
         	aLock.release();
 		}
     }

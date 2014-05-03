@@ -5,9 +5,9 @@ Kyle Michaels:3914066
 
 General Overview
 -------------------------------------------------------------------------------
-The purpose of this project was to make nachos handle user programs and
-implement a memory allocator that would safely map physical pages of memory to
-a virtual page for programs when they need to load.  This memory allocator also
+The purpose of this project was to make nachos execute several user programs
+concurrently and implement a memory allocator that would safely map physical
+pages of memory to virtual pages for programs.  This memory allocator also
 needed to correctly free pages when a program finished.  To do this we created
 our own MemoryAllocator class that took care of all these requirments.
 
@@ -18,18 +18,81 @@ explaining the modification to the UserProcess class.
 
 MemoryAllocator
 -------------------------------------------------------------------------------
+This class keeps track of the available physical pages and handels allocating
+them and causing programs to wait when there is not enough pages.  It also keeps
+track of the following information:
+private int numReservedPages;           number of current reserved pages
+private int numPhysPages;               number of total physical pages
+private int numMapped;                  number of current physical pages mapped
+private int maxNumReserved;             max number of concurrently reseved pages
+private int maxNumMapped;               max number of concurrently mapped pages
 
+We used a LinkedList of Integers that stores the available physical page numbers.
+Upon creation all physical page numbers are loaded into the list.  Along with the
+list of physical page numbers we used a Semaphore for the number of free physical
+pages so if there were no more free physical pages when a program tries to allocate
+that program would wait in the Semaphore waiting queue.
+
+When a page is allocated the freeMemory Semaphore is decremented and the first item
+in the freePages list is removed and returned as the allocated physical page number.
+When a program frees a page then the freeMemory Semaphore is incremented and the
+physical page number given by the argument ppn is added back into the List of free
+physical pages.
+
+The number of reserved pages is the total number of pages (not only mapped) for
+all loaded programs.  This is used to determine whether or not to load another
+program.  If the number of unreserved pages is less than the number of pages for
+a program that program enters the waiting queue of the waiting Semaphore.  Pages
+are unreserved when all the physical pages for a program have been freed.
+
+Anytime the freePages Semaphore and the List of freePages are accessed we use a
+Mutex Lock to protect shared data.  All UserProcess use a static instance of
+the MemoryAllocator.
 
 Data Structure:
-
+LinkedList - We used a Linked List to keep track of the free physical page numbers
+			 because allocation does not depend on the order of the pages therefore
+			 a LinkedList is the most time efficient (O(1)) to allocate and free a
+			 single page.
 
 UserProcess
 -------------------------------------------------------------------------------
+In UserProcess we modified how virtual and physical pages numbers are mapped.
+Orginally pages virtual page numbers were mapped to the same physical page number.
+Our implementation gets the physical page number from a static MemoryAllocator
+which is the class we created and described above.
 
+We also modified the UserProcess to keep track of the following statistics:
+protected static int totalProcesses;
+protected static int maxProcesses;
+
+totalProcesses indicates the current number of concurrently running programs
+maxProcesses indicates the max number of concurrently running programs
+
+Physical page numbers are mapped either when the program is loading or when a page
+fault occurs.  A page fault will occur anytime the program writes to a new physical
+page.  There will never be a page fault when reading because we are not swapping
+physical pages.
+
+We also added a signal handler for syscallExit which frees all pages mapped by the
+program and decrements the total number of running programs.  If that number reaches
+0 and the kernel has loaded all user programs then the machine is told it can halt.
+At this point all system statistics are printed to stdout.  Also when a program exits
+it signals the waiting queue in MemoryAllocator that a program may be able to load
+because it has freed its pages.
+
+Because we did not implement swapping, which was expressed in the assignment writeup,
+we added safety checks to avoid deadlocks.  When a program is being loaded if the
+number of unreserved pages, maintained by the static MemoryAllocator, is less than
+the total number of pages for that program, the program is rejected and a message
+is printed to stdout.
 
 UserKernel
 -------------------------------------------------------------------------------
-
+In UserKernel we modified the run method to run all the programs given by
+Machine.getShellProgramNames() which gives the programs listed in the config file
+under the Kernel.shellPrograms field.  We also added a process.readtToExit() call
+that tells the machine it can halt when there are no more programs running.
 
 Processor
 -------------------------------------------------------------------------------
@@ -38,9 +101,20 @@ config file used when run.  The field in that sets the page size in the config
 file is:
 Processor.pageSize
 
+We modified this value and show how the pageSize affects the number of pages
+allocated and how many programs can run at a time in the Performance Analysis
+at the end of this document.
+
+Machine
+-------------------------------------------------------------------------------
+We added the method getShellProgramNames.  This method parses the config file
+for the field Kernel.shellPrograms and creates a list of strings that represent
+the names of all the programs that will attempt to execute.
+
 Modifications to Nachos
 -------------------------------------------------------------------------------
-UserProcess, UserKernel, Processor were all modified and are described above.
+UserProcess, UserKernel, Processor and Machine were all modified as described
+above.
 
 Performance Analysis:
 	
