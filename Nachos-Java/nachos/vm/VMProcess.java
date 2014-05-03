@@ -39,7 +39,11 @@ public class VMProcess extends UserProcess {
      * @return	<tt>true</tt> if successful.
      */
     protected boolean loadSections() {
-	return super.loadSections();
+	return super.loadSections("");
+    }
+
+    protected boolean loadSections(String name) {
+	return super.loadSections(name);
     }
 
     /**
